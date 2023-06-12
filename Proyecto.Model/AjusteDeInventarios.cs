@@ -25,6 +25,7 @@ namespace Proyecto.Model
         [DataType(DataType.MultilineText)]
         public string Observaciones { get; set; }
         public string UserId { get; set; }
+        [DataType(DataType.Date)]
         public DateTime Fecha { get; set; }
     }
 }
