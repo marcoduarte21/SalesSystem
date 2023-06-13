@@ -21,5 +21,7 @@ namespace Proyecto.Model
         public int Cantidad { get; set; }
         [Required(ErrorMessage = "El campo Precio es requerido")]
         public float Precio { get; set; }
+        public ICollection<VentaDetalles> VentaDetalles { get; set; }
+        public ICollection<AjusteDeInventarios> AjusteDeInventarios { get; set; }
     }
 }

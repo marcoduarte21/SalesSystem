@@ -37,6 +37,6 @@ namespace Proyecto.Model
         public EstadoDeLaVenta Estado { get; set; }
         [Required]
         public int IdAperturaDeCaja { get; set; }
-
+        public ICollection<VentaDetalles> VentaDetalles { get; set; }
     }
 }
