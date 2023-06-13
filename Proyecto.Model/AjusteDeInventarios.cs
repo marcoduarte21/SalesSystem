@@ -13,6 +13,7 @@ namespace Proyecto.Model
     {
         [HiddenInput]
         [Key]
+        [Required]
         public int Id { get; set; }
         public int Id_Inventario { get; set; }
         [ForeignKey("Id_Inventario")]
