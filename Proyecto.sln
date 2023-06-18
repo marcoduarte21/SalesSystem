@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proyecto.BL", "Proyecto.BL\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proyecto.Model", "Proyecto.Model\Proyecto.Model.csproj", "{A0AB3E55-6541-422B-92D1-5647DAD0E4D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proyecto.UI", "Proyecto.UI\Proyecto.UI.csproj", "{BC47D467-D847-462A-94FF-71E19CE1CE56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proyecto.UI", "Proyecto.UI\Proyecto.UI.csproj", "{BC47D467-D847-462A-94FF-71E19CE1CE56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
