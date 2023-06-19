@@ -12,6 +12,7 @@ namespace Proyecto.Model
     {
         [HiddenInput]
         [Key]
+        [Display(Name = "ID")]
         public int Id { get; set; }
         [Required(ErrorMessage = "El campo Nombre es requerido")]
         public string Nombre { get; set; }
@@ -20,7 +21,7 @@ namespace Proyecto.Model
         [Required(ErrorMessage = "El campo Cantidad es requerido")]
         public int Cantidad { get; set; }
         [Required(ErrorMessage = "El campo Precio es requerido")]
-        public float Precio { get; set; }
+        public decimal Precio { get; set; }
         public ICollection<VentaDetalles> VentaDetalles { get; set; }
         public ICollection<AjusteDeInventarios> AjusteDeInventarios { get; set; }
     }
