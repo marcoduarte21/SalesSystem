@@ -17,7 +17,10 @@
 </form>
 
 <p>
-    <a asp-action="Create">Crear Nuevo</a>
+<p>
+    <a href="Inventarios/Create" class="btn_create">Crear nuevo</a>
+</p>
+
 </p>
 <table class="table">
     <thead>
@@ -59,8 +62,9 @@
                 @Html.DisplayFor(modelItem => item.Precio)
             </td>
             <td>
-                @Html.ActionLink("Editar", "Edit", new {  id=item.Id  }) |
-                @Html.ActionLink("Detalles", "Details", new {  id=item.Id })
+                    <a href="Inventarios/Edit?id=@item.Id" class="btn-edit">Editar</a> |
+                    <a href="Inventarios/Details?id=@item.Id" class="btn-details">Detalles</a>
+
             </td>
         </tr>
 }
