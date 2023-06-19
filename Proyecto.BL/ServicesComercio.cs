@@ -35,7 +35,7 @@ namespace Proyecto.BL
         public void EditeElItemDelInventario(Inventarios item)
         {
             Model.Inventarios itemAEditar;
-            itemAEditar = ObtengaElItem(item.Id);
+            itemAEditar = ObtengaElItemDelInventario(item.Id);
 
             itemAEditar.Nombre = item.Nombre;
             itemAEditar.Categoria = item.Categoria;
@@ -50,7 +50,7 @@ namespace Proyecto.BL
             throw new NotImplementedException();
         }
 
-        public Inventarios ObtengaElItem(int id)
+        public Inventarios ObtengaElItemDelInventario(int id)
         {
             Model.Inventarios item;
 

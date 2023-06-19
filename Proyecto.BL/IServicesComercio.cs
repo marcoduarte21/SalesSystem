@@ -8,7 +8,7 @@ namespace Proyecto.BL
         public List<Model.Inventarios> ObtengaLaListaDeInventariosPorElNombre(string nombre);
         public void AgregueElItemAlInventario(Model.Inventarios item);
         public void EditeElItemDelInventario(Model.Inventarios item);
-        public Model.Inventarios ObtengaElItem(int id);
+        public Model.Inventarios ObtengaElItemDelInventario(int id);
         public void AgregueLaVenta(Model.Ventas venta);
         public void ElimineElItemDeLaVenta(int id);
         public Model.Ventas ObtengaLaVentaPorElId(int id);
