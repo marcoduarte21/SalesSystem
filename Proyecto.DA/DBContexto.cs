@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace Proyecto.DA
 {
-    public class DBContexto : DbContext
+    public class DBContexto : IdentityDbContext
     {
 
         public DBContexto(DbContextOptions<DBContexto> dbContextOptions) : base(dbContextOptions)
