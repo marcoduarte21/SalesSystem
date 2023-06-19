@@ -24,15 +24,15 @@ namespace Proyecto.Model
         [Required(ErrorMessage = "El campo Tipo de Pago es requerido")]
         public TipoDePago TipoDePago { get; set; }
         [Required(ErrorMessage = "El campo Total es requerido")]
-        public float Total { get; set; }
+        public decimal Total { get; set; }
         [Required(ErrorMessage = "El campo SubTotal es requerido")]
-        public float SubTotal { get; set; }
+        public decimal SubTotal { get; set; }
         [Display(Name = "Porcentaje de Descuento")]
         [Required(ErrorMessage = "El campo Porcentaje de Descuento es requerido")]
         public int PorcentajeDesCuento { get; set; }
         [Display(Name = "Monto de Descuento")]
         [Required(ErrorMessage = "El campo Monto de Descuento es requerido")]
-        public float MontoDescuento { get; set; }
+        public decimal MontoDescuento { get; set; }
         public int UserId { get; set; }
         public EstadoDeLaVenta Estado { get; set; }
         [Required]

@@ -26,11 +26,11 @@ namespace Proyecto.Model
         [Required(ErrorMessage = "El campo Cantidad es requerido")]
         public int Cantidad { get; set; }
         [Required(ErrorMessage = "El campo Precio es requerido")]
-        public float Precio { get; set; }
+        public decimal Precio { get; set; }
         [Required(ErrorMessage = "El campo Monto es requerido")]
-        public float Monto { get; set; }
+        public decimal Monto { get; set; }
         [Display(Name = "Monto de Descuento")]
         [Required(ErrorMessage = "El campo Monto de Descuento es requerido")]
-        public float MontoDescuento { get; set; }
+        public decimal MontoDescuento { get; set; }
     }
 }
