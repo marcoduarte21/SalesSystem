@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Proyecto.UI.Models;
+using System.Diagnostics;
 
 namespace Proyecto.UI.Controllers
 {
+    [Authorize]
     public class InventariosController : Controller
     {
         DA.DBContexto DBContexto;
@@ -87,6 +91,6 @@ namespace Proyecto.UI.Controllers
             }
         }
 
-        
+
     }
 }
