@@ -82,7 +82,7 @@ namespace Proyecto.UI.Controllers
         {
             try
             {
-                ServiciosDelComercio.EditeElItemDelInventario(item);
+                ServiciosDelComercio.EditeElItemDelInventario(item.Id, item.Nombre, item.Categoria, item.Precio);
                 return RedirectToAction(nameof(Index));
             }
             catch

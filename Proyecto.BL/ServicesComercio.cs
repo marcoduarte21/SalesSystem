@@ -59,14 +59,14 @@ namespace Proyecto.BL
             throw new NotImplementedException();
         }
 
-        public void EditeElItemDelInventario(Inventarios item)
+        public void EditeElItemDelInventario(int idItem, string nombre, Categoria categoria, decimal precio)
         {
             Model.Inventarios itemAEditar;
-            itemAEditar = ObtengaElItemDelInventario(item.Id);
+            itemAEditar = ObtengaElItemDelInventario(idItem);
 
-            itemAEditar.Nombre = item.Nombre;
-            itemAEditar.Categoria = item.Categoria;
-            itemAEditar.Precio = item.Precio;
+            itemAEditar.Nombre = nombre;
+            itemAEditar.Categoria = categoria;
+            itemAEditar.Precio = precio;
 
             Connection.Inventarios.Update(itemAEditar);
             Connection.SaveChanges();

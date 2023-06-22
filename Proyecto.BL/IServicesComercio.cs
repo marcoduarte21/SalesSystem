@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Routing.Constraints;
+using Proyecto.Model;
 
 namespace Proyecto.BL
 {
@@ -7,7 +8,7 @@ namespace Proyecto.BL
         public List<Model.Inventarios> ObtengaLaListaDeInventarios();
         public List<Model.Inventarios> ObtengaLaListaDeInventariosPorElNombre(string nombre);
         public void AgregueElItemAlInventario(Model.Inventarios item);
-        public void EditeElItemDelInventario(Model.Inventarios item);
+        public void EditeElItemDelInventario(int idItem, string nombre, Categoria categoria, decimal precio);
         public Model.Inventarios ObtengaElItemDelInventario(int id);
         public void AgregueLaVenta(Model.Ventas venta);
         public void ElimineElItemDeLaVenta(int id);
