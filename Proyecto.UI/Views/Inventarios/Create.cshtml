@@ -29,14 +29,18 @@
             <div class="form-group">
                 <input type="submit" value="Crear" class="btn btn-primary" />
             </div>
-        </form>
+           
+    </form>
+        
     </div>
 </div>
 <br />
 <div>
     <a asp-controller="Inventarios" asp-action="Index" class="btn-edit">Regresar</a>
 </div>
-
+ <form action="@Url.Action("AbrirCaja", "Caja")" method="post">
+    <button type="submit">Abrir Caja</button>
+</form>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

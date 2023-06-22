@@ -14,5 +14,9 @@ namespace Proyecto.BL
         public Model.Ventas ObtengaLaVentaPorElId(int id);
         public void ApliqueElDescuento(float porcentajeDeDescuento);
         public Model.Ventas ProceseLaVenta(Model.Ventas ventas);
+      
+
+        public void AbrirCaja();
+        public void CerrarCaja();
     }
 }

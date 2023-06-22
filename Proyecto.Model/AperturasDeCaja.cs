@@ -18,5 +18,7 @@ namespace Proyecto.Model
         public DateTime? FechaDeCierre { get; set; }
         public string? Observaciones { get; set; }
         public EstadoDeLaCaja Estado { get; set; }
+
+       
     }
 }
