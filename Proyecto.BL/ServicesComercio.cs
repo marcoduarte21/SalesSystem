@@ -9,6 +9,7 @@ using System.Security.Principal;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Identity.Client;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace Proyecto.BL
 {
@@ -16,11 +17,18 @@ namespace Proyecto.BL
     {
 
         DA.DBContexto Connection;
+        UserManager<IdentityUser> _userManager;
         
+        public ServicesComercio(DA.DBContexto connection, UserManager<IdentityUser> userManager)
+        {
+            _userManager = userManager;
+            Connection = connection;
+            
+        }
+
         public ServicesComercio(DA.DBContexto connection)
         {
             Connection = connection;
-            
         }
 
         public void AbrirCaja()
@@ -29,7 +37,7 @@ namespace Proyecto.BL
             AperturasDeCaja nuevaApertura = new AperturasDeCaja
             {
                 FechaDeInicio = DateTime.Now,
-                UserId = int.Parse(ObtenerUsuarioLogueado()),
+                UserId = int.Parse(ObtenerElIdUsuarioLogueado()),
                 Estado = EstadoDeLaCaja.ABIERTA // Asignar el estado de la caja a "Abierta"
             };
 
@@ -77,15 +85,15 @@ namespace Proyecto.BL
             throw new NotImplementedException();
         }
 
-        public string ObtenerUsuarioLogueado()
+        public string ObtenerElIdUsuarioLogueado()
         {
             var httpContextAccessor = new HttpContextAccessor();
             var user = httpContextAccessor.HttpContext?.User;
-
+           
             if (user?.Identity?.IsAuthenticated == true)
             {
-                string usuario = user.Identity.Name;
-                return usuario;
+                string userName = _userManager.GetUserId(user);
+                return userName;
             }
             else
             {
@@ -93,6 +101,24 @@ namespace Proyecto.BL
                 throw new Exception("No hay un usuario logueado.");
             }
         }
+
+        public string ObtenerElUserNameLogueado()
+        {
+            var httpContextAccessor = new HttpContextAccessor();
+            var user = httpContextAccessor.HttpContext?.User;
+
+            if (user?.Identity?.IsAuthenticated == true)
+            {
+                string userName = _userManager.GetUserName(user);
+                return userName;
+            }
+            else
+            {
+                // Manejar el caso cuando no hay usuario logueado
+                throw new Exception("No hay un usuario logueado.");
+            }
+        }
+
 
         public Inventarios ObtengaElItemDelInventario(int id)
         {
@@ -142,7 +168,7 @@ namespace Proyecto.BL
             ajuste.Tipo = NuevoAjuste.Tipo;
             ajuste.Observaciones = NuevoAjuste.Observaciones;
             ajuste.Fecha = ObtenerFechaActual();
-            ajuste.UserId = ObtenerUsuarioLogueado();
+            ajuste.UserId = ObtenerElUserNameLogueado();
             itemDelInventario.AjusteDeInventarios.Add(ajuste);
             Connection.Inventarios.Update(itemDelInventario);
             Connection.SaveChanges();

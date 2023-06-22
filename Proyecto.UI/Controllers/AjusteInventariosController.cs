@@ -13,14 +13,12 @@ namespace Proyecto.UI.Controllers
 
         DA.DBContexto DBContexto;
         BL.ServicesComercio ServiciosDelComercio;
-        private readonly UserManager<IdentityUser> _userManager;
-
 
         public AjusteInventariosController(DA.DBContexto connection, UserManager<IdentityUser> userManager)
         {
-            _userManager = userManager;
+            
             DBContexto = connection;
-            ServiciosDelComercio = new BL.ServicesComercio(connection);
+            ServiciosDelComercio = new BL.ServicesComercio(connection, userManager);
         }
 
 
@@ -80,8 +78,6 @@ namespace Proyecto.UI.Controllers
         {
             try
             {
-                item.UserId = _userManager.GetUserName(HttpContext.User);
-
                 ServiciosDelComercio.AgregueElNuevoAjusteDeInventario(item);
                 return RedirectToAction(nameof(Index));
             }
