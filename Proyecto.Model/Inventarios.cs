@@ -22,6 +22,8 @@ namespace Proyecto.Model
         [Required(ErrorMessage = "El campo Cantidad es requerido")]
         public int Cantidad { get; set; }
         [Required(ErrorMessage = "El campo Precio es requerido")]
+        [DataType(DataType.Currency)]
+        [Range(0, double.MaxValue, ErrorMessage = "El Precio no debe ser menor a 0")]
         public decimal Precio { get; set; }
         public ICollection<VentaDetalles> VentaDetalles { get; set; }
         public ICollection<AjusteDeInventarios> AjusteDeInventarios { get; set; }

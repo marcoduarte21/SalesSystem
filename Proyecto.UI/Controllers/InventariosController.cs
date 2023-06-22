@@ -72,6 +72,7 @@ namespace Proyecto.UI.Controllers
         {
             Model.Inventarios item;
             item = ServiciosDelComercio.ObtengaElItemDelInventario(id);
+            item.Precio = (int)item.Precio;
             return View(item);
         }
 
