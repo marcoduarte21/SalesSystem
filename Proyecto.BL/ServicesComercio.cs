@@ -96,11 +96,14 @@ namespace Proyecto.BL
 
         public Inventarios ObtengaElItemDelInventario(int id)
         {
-            Model.Inventarios item;
-
-            item = Connection.Inventarios.Find(id);
-
-            return item;
+            foreach(var item in Connection.Inventarios)
+            {
+                if(item.Id == id)
+                {
+                    return item;
+                }
+            }
+            return null;
         }
 
         public List<Inventarios> ObtengaLaListaDeInventarios()
@@ -117,11 +120,29 @@ namespace Proyecto.BL
             return ListaFiltrada;
         }
 
-        public void AgregueElNuevoAjusteDeInventario(AjusteDeInventarios NuevoAjuste, int id)
+        public void AgregueElNuevoAjusteDeInventario(AjusteDeInventarios NuevoAjuste)
         {
-            NuevoAjuste.Id_Inventario = id;
-            NuevoAjuste.Fecha = ObtenerFechaActual();
-            Connection.AjusteDeInventarios.Add(NuevoAjuste);
+
+            Model.Inventarios itemDelInventario;
+            Model.AjusteDeInventarios ajuste = new AjusteDeInventarios();
+            itemDelInventario = ObtengaElItemDelInventario(NuevoAjuste.Id_Inventario);
+            itemDelInventario.AjusteDeInventarios = new List<Model.AjusteDeInventarios>();
+            if(NuevoAjuste.Tipo == TipoDeAjuste.Aumento)
+            {
+                itemDelInventario.Cantidad = itemDelInventario.Cantidad + NuevoAjuste.Ajuste;
+            }
+            else
+            {
+                itemDelInventario.Cantidad = itemDelInventario.Cantidad - NuevoAjuste.Ajuste;
+            }
+            ajuste.CantidadActual = NuevoAjuste.CantidadActual;
+            ajuste.Ajuste = NuevoAjuste.Ajuste;
+            ajuste.Tipo = NuevoAjuste.Tipo;
+            ajuste.Observaciones = NuevoAjuste.Observaciones;
+            ajuste.Fecha = ObtenerFechaActual();
+            ajuste.UserId = ObtenerUsuarioLogueado();
+            itemDelInventario.AjusteDeInventarios.Add(ajuste);
+            Connection.Inventarios.Update(itemDelInventario);
             Connection.SaveChanges();
         }
 

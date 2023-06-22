@@ -50,22 +50,31 @@ namespace Proyecto.UI.Controllers
         }
 
         // GET: AjusteInventariosController/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
         {
-            return View();
+
+            Model.Inventarios itemSeleccionado;
+            Model.AjusteDeInventarios itemAjuste;
+            itemSeleccionado = ServiciosDelComercio.ObtengaElItemDelInventario(id);
+
+            itemAjuste = new Model.AjusteDeInventarios
+            {
+                Id_Inventario = id,
+                CantidadActual = itemSeleccionado.Cantidad,
+            };
+            return View(itemAjuste);
         }
 
         // POST: AjusteInventariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Model.AjusteDeInventarios item, int id)
+        public ActionResult Create(Model.AjusteDeInventarios item)
         {
             try
             {
-                ViewBag.IdInventario = id;
-                item.UserId = _userManager.GetUserId(HttpContext.User);
+                item.UserId = _userManager.GetUserName(HttpContext.User);
 
-                ServiciosDelComercio.AgregueElNuevoAjusteDeInventario(item, id);
+                ServiciosDelComercio.AgregueElNuevoAjusteDeInventario(item);
                 return RedirectToAction(nameof(Index));
             }
             catch
