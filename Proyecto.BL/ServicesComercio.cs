@@ -106,6 +106,8 @@ namespace Proyecto.BL
             return null;
         }
 
+
+
         public List<Inventarios> ObtengaLaListaDeInventarios()
         {
             return Connection.Inventarios.ToList();
@@ -144,6 +146,18 @@ namespace Proyecto.BL
             itemDelInventario.AjusteDeInventarios.Add(ajuste);
             Connection.Inventarios.Update(itemDelInventario);
             Connection.SaveChanges();
+        }
+
+        public AjusteDeInventarios ObtengaLosDetallesDelAjusteDeInventario(int id)
+        {
+            foreach (var ajuste in Connection.AjusteDeInventarios)
+            {
+                if (ajuste.Id == id)
+                {
+                    return ajuste;
+                }
+            }
+            return null;
         }
 
         public List<AjusteDeInventarios> ObtengaLaListaDeAjustesDeInventario(int id)

@@ -49,6 +49,14 @@ namespace Proyecto.UI.Controllers
             return View(lista);
         }
 
+
+        public ActionResult DetallesDelAjuste(int id)
+        {
+            Model.AjusteDeInventarios item;
+            item = ServiciosDelComercio.ObtengaLosDetallesDelAjusteDeInventario(id);
+            return View(item);
+        }
+
         // GET: AjusteInventariosController/Create
         public ActionResult Create(int id)
         {

@@ -45,6 +45,10 @@
             <td>
                 @Html.DisplayFor(modelItem => item.UserId)
             </td>
+                <td>
+                    @Html.ActionLink("Detalles del ajuste", "DetallesDelAjuste", new { id = item.Id }, new { @class = "btn-edit" })
+
+                </td>
         </tr>
 }
     </tbody>
