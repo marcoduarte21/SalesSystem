@@ -117,6 +117,26 @@ namespace Proyecto.BL
             return ListaFiltrada;
         }
 
+        public void AgregueElNuevoAjusteDeInventario(AjusteDeInventarios NuevoAjuste, int id)
+        {
+            NuevoAjuste.Id_Inventario = id;
+            NuevoAjuste.Fecha = ObtenerFechaActual();
+            Connection.AjusteDeInventarios.Add(NuevoAjuste);
+            Connection.SaveChanges();
+        }
+
+        public List<AjusteDeInventarios> ObtengaLaListaDeAjustesDeInventario(int id)
+        {
+            return Connection.AjusteDeInventarios.Where(a => a.Id_Inventario == id).ToList();
+        }
+
+
+        public DateTime ObtenerFechaActual()
+        {
+            DateTime fechaActual = DateTime.Now;
+            return fechaActual;
+        }
+
         public Ventas ObtengaLaVentaPorElId(int id)
         {
             throw new NotImplementedException();

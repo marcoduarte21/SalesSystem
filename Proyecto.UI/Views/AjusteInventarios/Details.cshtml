@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Proyecto.Model.AjusteDeInventarios>
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Lista de ajustes realizados</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CantidadActual)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ajuste)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tipo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fecha)
+            </th>
+            <th>
+                Nombre de Usuario
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CantidadActual)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ajuste)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tipo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Fecha)
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

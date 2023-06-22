@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Proyecto.Model.Inventarios>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Ajustes de inventario</h1>
+
+<form asp-controller="Inventarios" asp-action="Index" method="get">
+
+    <p>
+        Nombre: <input type="text" name="nombre" />
+        <input type="submit" value="Filtrar" />
+
+    </p>
+
+</form>
+
+<p>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cantidad)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Precio)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cantidad)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Precio)
+                </td>
+                <td>
+                    <a href="AjusteInventarios/Details?id=@item.Id" class="btn-edit">Mostrar lista de ajustes</a> |
+                    <a href="AjusteInventarios/Create?id=@item.Id" class="btn-details">Agregar un ajuste</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
