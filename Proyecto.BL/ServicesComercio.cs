@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Identity.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel;
 
 namespace Proyecto.BL
 {
@@ -18,12 +19,12 @@ namespace Proyecto.BL
 
         DA.DBContexto Connection;
         UserManager<IdentityUser> _userManager;
-        
+
         public ServicesComercio(DA.DBContexto connection, UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
             Connection = connection;
-            
+
         }
 
         public ServicesComercio(DA.DBContexto connection)
@@ -54,12 +55,61 @@ namespace Proyecto.BL
 
         public void AgregueLaVenta(Ventas venta)
         {
-            throw new NotImplementedException();
+            venta.Fecha = ObtenerFechaActual();
+            venta.UserId = int.Parse(ObtenerElIdUsuarioLogueado());
+            venta.IdAperturaDeCaja = 1;
+            venta.Estado = EstadoDeLaVenta.EnProceso;
+
+            Connection.Ventas.Add(venta);
+            Connection.SaveChanges();
         }
 
-        public void ApliqueElDescuento(float porcentajeDeDescuento)
+        public void AgregueElItemALaVenta(Model.VentaDetalles detalle)
         {
-            throw new NotImplementedException();
+            Model.VentaDetalles ventaDetalles = new VentaDetalles();
+            Model.Ventas venta;
+
+            venta = ObtengaLaVentaPorElId(detalle.Id_Venta);
+            venta.VentaDetalles = new List<Model.VentaDetalles>();
+
+            detalle.SubTotal = ObtengaElSubTotalDelItemDeLaVenta(detalle);
+            detalle.Monto = ObtengaElTotalDelItemDeLaVenta(detalle);
+
+            ventaDetalles = detalle;
+
+            venta.VentaDetalles.Add(ventaDetalles);
+            Connection.Ventas.Update(venta);
+            Connection.SaveChanges();
+
+        }
+
+        private decimal ObtengaElSubTotalDelItemDeLaVenta(VentaDetalles detalle)
+        {
+            decimal subtotal;
+            subtotal = detalle.Precio * detalle.Cantidad;
+
+            return subtotal;
+        }
+
+        private decimal ObtengaElTotalDelItemDeLaVenta(VentaDetalles detalle)
+        {
+            decimal total;
+            total = detalle.SubTotal - detalle.MontoDescuento;
+
+            return total;
+        }
+
+        private decimal ObtengaElTotalDeLaVenta(Model.Ventas venta)
+        {
+            venta.Total = venta.SubTotal - ApliqueElDescuento(venta);
+            return venta.Total;
+        }
+
+        public decimal ApliqueElDescuento(Model.Ventas venta)
+        {
+
+            venta.MontoDescuento = venta.SubTotal * (venta.PorcentajeDesCuento / 100);
+            return venta.MontoDescuento;
         }
 
         public void CerrarCaja()
@@ -155,23 +205,34 @@ namespace Proyecto.BL
             Model.AjusteDeInventarios ajuste = new AjusteDeInventarios();
             itemDelInventario = ObtengaElItemDelInventario(NuevoAjuste.Id_Inventario);
             itemDelInventario.AjusteDeInventarios = new List<Model.AjusteDeInventarios>();
-            if(NuevoAjuste.Tipo == TipoDeAjuste.Aumento)
-            {
-                itemDelInventario.Cantidad = itemDelInventario.Cantidad + NuevoAjuste.Ajuste;
-            }
-            else
-            {
-                itemDelInventario.Cantidad = itemDelInventario.Cantidad - NuevoAjuste.Ajuste;
-            }
+
+            RetorneLaCantidadFinal(NuevoAjuste, itemDelInventario);
+
             ajuste.CantidadActual = itemDelInventario.Cantidad;
             ajuste.Ajuste = NuevoAjuste.Ajuste;
             ajuste.Tipo = NuevoAjuste.Tipo;
             ajuste.Observaciones = NuevoAjuste.Observaciones;
             ajuste.Fecha = ObtenerFechaActual();
             ajuste.UserId = ObtenerElUserNameLogueado();
+
             itemDelInventario.AjusteDeInventarios.Add(ajuste);
             Connection.Inventarios.Update(itemDelInventario);
             Connection.SaveChanges();
+        }
+
+        public int RetorneLaCantidadFinal(Model.AjusteDeInventarios NuevoAjuste, Model.Inventarios itemDelInventario)
+        {
+
+            if (NuevoAjuste.Tipo == TipoDeAjuste.Aumento)
+            {
+                itemDelInventario.Cantidad = itemDelInventario.Cantidad + NuevoAjuste.Ajuste;
+                return itemDelInventario.Cantidad;
+            }
+            else
+            {
+                itemDelInventario.Cantidad = itemDelInventario.Cantidad - NuevoAjuste.Ajuste;
+                return itemDelInventario.Cantidad;
+            }
         }
 
         public AjusteDeInventarios ObtengaLosDetallesDelAjusteDeInventario(int id)

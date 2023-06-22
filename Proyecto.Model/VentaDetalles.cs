@@ -27,7 +27,10 @@ namespace Proyecto.Model
         public int Cantidad { get; set; }
         [Required(ErrorMessage = "El campo Precio es requerido")]
         public decimal Precio { get; set; }
-        [Required(ErrorMessage = "El campo Monto es requerido")]
+        [NotMapped]
+        [Display(Name = "Subtotal")]
+        public decimal SubTotal { get; set; }
+        [Display(Name = "Total")]
         public decimal Monto { get; set; }
         [Display(Name = "Monto de Descuento")]
         [Required(ErrorMessage = "El campo Monto de Descuento es requerido")]
