@@ -137,7 +137,7 @@ namespace Proyecto.BL
             {
                 itemDelInventario.Cantidad = itemDelInventario.Cantidad - NuevoAjuste.Ajuste;
             }
-            ajuste.CantidadActual = NuevoAjuste.CantidadActual;
+            ajuste.CantidadActual = itemDelInventario.Cantidad;
             ajuste.Ajuste = NuevoAjuste.Ajuste;
             ajuste.Tipo = NuevoAjuste.Tipo;
             ajuste.Observaciones = NuevoAjuste.Observaciones;
