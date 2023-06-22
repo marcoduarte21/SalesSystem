@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Proyecto.BL;
 
 namespace Proyecto.UI.Controllers
@@ -8,9 +9,9 @@ namespace Proyecto.UI.Controllers
     {
         private readonly ServicesComercio _servicesComercio;
 
-        public CajaController(ServicesComercio servicesComercio)
+        public CajaController(DA.DBContexto connection, UserManager<IdentityUser> userManager)
         {
-            _servicesComercio = servicesComercio;
+            _servicesComercio = new ServicesComercio(connection, userManager);
         }
 
 
