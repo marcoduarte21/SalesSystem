@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto.DA;
@@ -6,6 +7,7 @@ using Proyecto.UI.Controllers;
 
 namespace Proyecto.UI.Controllers
 {
+    [Authorize]
     public class AjusteInventariosController : Controller
     {
 
