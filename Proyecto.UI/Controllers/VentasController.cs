@@ -37,7 +37,7 @@ namespace Proyecto.UI.Controllers
             return PartialView("ListaInventarios", lista);
         }
 
-        public IActionResult _InsertarItem(int id)
+        public IActionResult InsertarItem(int id)
         {
             Model.Inventarios inventario;
             inventario = ServicesComercio.ObtengaElItemDelInventario(id);
