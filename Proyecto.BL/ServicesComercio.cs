@@ -11,6 +11,7 @@ using Microsoft.Identity.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace Proyecto.BL
 {
@@ -182,6 +183,17 @@ namespace Proyecto.BL
             return null;
         }
 
+        public List<Model.VentaDetalles> ObtengaLaListaDelDetalleLaVenta()
+        {
+
+            var lista = from detalle in Connection.VentaDetalles
+                        join inventario in Connection.Inventarios 
+                        on detalle.Id_Inventario equals inventario.Id
+                        join venta in Connection.Ventas on detalle.Id_Venta equals venta.Id
+                        select detalle;
+
+            return (List < Model.VentaDetalles >) lista.ToList();
+        }
 
 
         public List<Inventarios> ObtengaLaListaDeInventarios()

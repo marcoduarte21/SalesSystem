@@ -15,7 +15,7 @@ namespace Proyecto.UI.Controllers
         }
         
 
-        public ActionResult ModuloVenta(Model.Ventas ventas) {
+        public ActionResult ModuloVenta() {
 
             ViewBag.ListaDeInventarios = ServicesComercio.ObtengaLaListaDeInventarios();
             return View();
@@ -24,7 +24,6 @@ namespace Proyecto.UI.Controllers
 
         public ActionResult CrearVenta(Model.Ventas ventas)
         {
-
             ServicesComercio.AgregueLaVenta(ventas);
             return View();
         }

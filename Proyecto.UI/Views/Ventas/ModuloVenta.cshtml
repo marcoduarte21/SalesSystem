@@ -19,11 +19,6 @@
                 <span asp-validation-for="NombreCliente" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TipoDePago" class="control-label"></label>
-                <input asp-for="TipoDePago" class="form-control" />
-                <span asp-validation-for="TipoDePago" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <input type="submit" value="Registrar" class="btn btn-primary" />
             </div>
         </form>
@@ -31,6 +26,7 @@
 </div>
 
 <br /> <br />
+<h4>Inventario</h4>
 <table class="table">
     <thead>
         <tr>
@@ -75,11 +71,53 @@
     </tbody>
 </table>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<h4>Datos de la venta</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Cantidad
+            </th>
+            <th>
+               Subtotal
+            </th>
+            <th>
+                Monto de descuento
+            </th>
+            <th>
+                Total
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ListaDeInventarios)
+        {
+            string precio = String.Format("₡ {0:0,0.00}", item.Precio);
 
-
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.Categoria
+                </td>
+                <td>
+                    @item.Cantidad
+                </td>
+                <td>
+                    @precio
+                </td>
+                <td>
+                    <a href="Inventarios/Edit?id=@item.Id" class="btn-addItem">Agregar</a> |
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
