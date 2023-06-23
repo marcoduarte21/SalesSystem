@@ -26,14 +26,15 @@ namespace Proyecto.UI.Controllers
 
         public ActionResult Crear(Model.Ventas ventas)
         {
-            return View();
+            ServicesComercio.AgregueLaVenta(ventas);
+            return View("Registro");
         }
 
-        public IActionResult ListaDeInventarios()
+        public IActionResult ListaInventarios()
         {
             List<Model.Inventarios> lista;
             lista = ServicesComercio.ObtengaLaListaDeInventarios();
-            return View("ListaDeInventarios", lista);
+            return PartialView("ListaInventarios", lista);
         }
 
         public IActionResult _InsertarItem(int id)
@@ -44,7 +45,7 @@ namespace Proyecto.UI.Controllers
 
             detalles = ServicesComercio.AgregueElInventarioAlDetalle(inventario);
 
-            return PartialView("_DetalleVenta", detalles);
+            return PartialView("DetallesVenta", detalles);
         }
 
     }

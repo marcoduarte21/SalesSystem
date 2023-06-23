@@ -5,48 +5,65 @@
     <thead>
         <tr>
             <th>
-                Nombre
+                @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                Cantidad
+                @Html.DisplayNameFor(model => model.Id_Venta)
             </th>
             <th>
-                Subtotal
+                @Html.DisplayNameFor(model => model.Id_Inventario)
             </th>
             <th>
-                Monto de descuento
+                @Html.DisplayNameFor(model => model.Cantidad)
             </th>
             <th>
-                Total
+                @Html.DisplayNameFor(model => model.Precio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SubTotal)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Monto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MontoDescuento)
             </th>
             <th></th>
         </tr>
     </thead>
-    <tbody id="Detalles">
-     @foreach(var item in Model){
-    <tr>
-    <td>
-        @Html.DisplayFor(model => item.Inventarios.Nombre)
-    </td>
-                <td>
-                    @Html.DisplayFor(model => item.Inventarios.Nombre)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => item.Cantidad)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => item.SubTotal)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => item.MontoDescuento)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => item.Monto)
-                </td>
-                <td>
-                    <a href="Inventarios/Edit?id=@item.Id" class="btn-edit">Eliminar</a> |
-                </td>
-</tr>
-     }
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id_Venta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id_Inventario)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cantidad)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Precio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubTotal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Monto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MontoDescuento)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
     </tbody>
 </table>
