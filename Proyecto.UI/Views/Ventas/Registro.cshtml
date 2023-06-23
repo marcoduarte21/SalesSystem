@@ -1,0 +1,123 @@
+﻿@model Proyecto.Model.Ventas
+@{
+    ViewData["Title"] = "Registro de ventas";
+}
+
+<h1>Registrar venta</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Registro">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="NombreCliente" class="control-label"></label>
+                <input asp-for="NombreCliente" class="form-control" />
+                <span asp-validation-for="NombreCliente" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Registrar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<br />
+<button id="ShowInventario" class="btn-edit">Ver inventario</button>
+
+<br />
+
+<div id="ListaDeInventarios">
+
+</div>
+
+<h4>Detalle del producto</h4>
+
+<table class="table">
+<thead>
+    <tr>
+        <th>
+            ID
+        </th>
+        <th>
+            Nombre
+        </th>
+        <th>Precio</th>
+        <th>
+            Cantidad
+        </th>
+        <th></th>
+    </tr>
+</thead>
+
+<tbody>
+        <tr>
+            <td>
+                -
+            </td>
+            <td id="nombre">
+                -
+            </td>
+            <td id="precio">
+                0.00
+            </td>
+            <td>
+               <input type="number" value="0"/>
+            </td>
+        </tr>
+</tbody>
+</table>
+
+<br />
+<h4>Detalle de la venta</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Cantidad
+            </th>
+            <th>
+                Subtotal
+            </th>
+            <th>
+                Monto de descuento
+            </th>
+            <th>
+                Total
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="Detalles">
+
+    </tbody>
+</table>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        $(document).ready(function() {
+
+            $("#ShowInventario").click(function(){
+
+                $("#ListaDeInventarios").load("ListaInventarios");
+            });
+
+            $("#AddItem").click(function () {
+
+                $("#id").html($("#Id").html());
+                $("#nombre").html($("#Nombre").html());
+                $("#precio").html($("#Precio").html());
+            });
+
+        });
+    </script>
+}
+

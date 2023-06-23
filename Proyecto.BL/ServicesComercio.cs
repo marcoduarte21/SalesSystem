@@ -39,7 +39,7 @@ namespace Proyecto.BL
             AperturasDeCaja nuevaApertura = new AperturasDeCaja
             {
                 FechaDeInicio = DateTime.Now,
-                UserId = int.Parse(ObtenerElIdUsuarioLogueado()),
+                UserId = ObtenerElIdUsuarioLogueado(),
                 Estado = EstadoDeLaCaja.ABIERTA // Asignar el estado de la caja a "Abierta"
             };
 
@@ -57,7 +57,7 @@ namespace Proyecto.BL
         public void AgregueLaVenta(Ventas venta)
         {
             venta.Fecha = ObtenerFechaActual();
-            venta.UserId = int.Parse(ObtenerElIdUsuarioLogueado());
+            venta.UserId = ObtenerElIdUsuarioLogueado();
             venta.IdAperturaDeCaja = 1;
             venta.Estado = EstadoDeLaVenta.EnProceso;
 
@@ -65,7 +65,28 @@ namespace Proyecto.BL
             Connection.SaveChanges();
         }
 
-        public void AgregueElItemALaVenta(Model.VentaDetalles detalle)
+        public VentaDetalles AgregueElInventarioAlDetalle(Inventarios item)
+        {
+            Model.VentaDetalles detalle = new VentaDetalles();
+            Model.Inventarios inventarios;
+            inventarios = ObtengaElItemDelInventario(item.Id);
+            inventarios.VentaDetalles = new List<Model.VentaDetalles>();
+
+            detalle.Inventarios.Nombre = item.Nombre;
+            detalle.Id_Inventario = item.Id;
+            detalle.Precio = item.Precio;
+
+            inventarios.VentaDetalles.Add(detalle);
+
+            Connection.Inventarios.Update(inventarios);
+            Connection.SaveChanges();
+
+            return detalle;
+            
+        }
+
+
+        public VentaDetalles AgregueElItemALaVenta(Model.VentaDetalles detalle)
         {
             Model.VentaDetalles ventaDetalles = new VentaDetalles();
             Model.Ventas venta;
@@ -81,6 +102,8 @@ namespace Proyecto.BL
             venta.VentaDetalles.Add(ventaDetalles);
             Connection.Ventas.Update(venta);
             Connection.SaveChanges();
+
+            return ventaDetalles;
 
         }
 
@@ -111,6 +134,18 @@ namespace Proyecto.BL
 
             venta.MontoDescuento = venta.SubTotal * (venta.PorcentajeDesCuento / 100);
             return venta.MontoDescuento;
+        }
+
+        public void ElimineElItemDelDetalle(int id)
+        {
+
+            foreach(var item in Connection.VentaDetalles)
+            {
+                if(item.Id == id)
+                {
+                    Connection.VentaDetalles.Remove(item);
+                }
+            }
         }
 
         public void CerrarCaja()

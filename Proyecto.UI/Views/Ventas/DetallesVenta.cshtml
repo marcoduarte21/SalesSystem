@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Proyecto.Model.VentaDetalles>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Cantidad
+            </th>
+            <th>
+                Subtotal
+            </th>
+            <th>
+                Monto de descuento
+            </th>
+            <th>
+                Total
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="Detalles">
+     @foreach(var item in Model){
+    <tr>
+    <td>
+        @Html.DisplayFor(model => item.Inventarios.Nombre)
+    </td>
+                <td>
+                    @Html.DisplayFor(model => item.Inventarios.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Cantidad)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.SubTotal)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.MontoDescuento)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Monto)
+                </td>
+                <td>
+                    <a href="Inventarios/Edit?id=@item.Id" class="btn-edit">Eliminar</a> |
+                </td>
+</tr>
+     }
+    </tbody>
+</table>

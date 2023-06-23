@@ -10,7 +10,7 @@ namespace Proyecto.Model
         [Key]
         [HiddenInput]
         public int Id { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         [Display(Name = "Fecha de Inicio")]
         [Required(ErrorMessage = "El campo Fecha de Inicio es requerido")]
         public DateTime FechaDeInicio { get; set; }

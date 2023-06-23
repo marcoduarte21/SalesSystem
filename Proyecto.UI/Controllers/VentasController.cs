@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query;
+using Proyecto.Model;
 
 namespace Proyecto.UI.Controllers
 {
@@ -15,17 +17,34 @@ namespace Proyecto.UI.Controllers
         }
         
 
-        public ActionResult ModuloVenta() {
+        public ActionResult Registro() {
 
             ViewBag.ListaDeInventarios = ServicesComercio.ObtengaLaListaDeInventarios();
             return View();
         }
 
 
-        public ActionResult CrearVenta(Model.Ventas ventas)
+        public ActionResult Crear(Model.Ventas ventas)
         {
-            ServicesComercio.AgregueLaVenta(ventas);
             return View();
+        }
+
+        public IActionResult ListaDeInventarios()
+        {
+            List<Model.Inventarios> lista;
+            lista = ServicesComercio.ObtengaLaListaDeInventarios();
+            return View("ListaDeInventarios", lista);
+        }
+
+        public IActionResult _InsertarItem(int id)
+        {
+            Model.Inventarios inventario;
+            inventario = ServicesComercio.ObtengaElItemDelInventario(id);
+            Model.VentaDetalles detalles;
+
+            detalles = ServicesComercio.AgregueElInventarioAlDetalle(inventario);
+
+            return PartialView("_DetalleVenta", detalles);
         }
 
     }

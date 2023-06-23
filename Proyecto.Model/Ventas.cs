@@ -35,7 +35,7 @@ namespace Proyecto.Model
         [Display(Name = "Monto de Descuento")]
         [Required(ErrorMessage = "El campo Monto de Descuento es requerido")]
         public decimal MontoDescuento { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public EstadoDeLaVenta Estado { get; set; }
         [Required]
         public int IdAperturaDeCaja { get; set; }
