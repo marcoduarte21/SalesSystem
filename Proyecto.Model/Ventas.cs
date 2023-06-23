@@ -26,6 +26,8 @@ namespace Proyecto.Model
         [Required(ErrorMessage = "El campo Total es requerido")]
         public decimal Total { get; set; }
         [Required(ErrorMessage = "El campo SubTotal es requerido")]
+        [DataType(DataType.Currency)]
+        [Range(0, double.MaxValue, ErrorMessage = "El Precio no debe ser menor a 0")]
         public decimal SubTotal { get; set; }
         [Display(Name = "Porcentaje de Descuento")]
         [Required(ErrorMessage = "El campo Porcentaje de Descuento es requerido")]

@@ -52,6 +52,15 @@ thead{
     font-weight: bold;
 }
 
+.btn-addItem {
+    text-decoration: none;
+    border: 5px;
+    background-color: green;
+    color: #fff;
+    padding: 4px;
+    border-radius: 10px;
+    font-weight: bold;
+}
 
 
 

@@ -1,0 +1,86 @@
+﻿@model Proyecto.Model.Ventas
+@{
+    ViewData["Title"] = "Registro de ventas";
+    List<Proyecto.Model.Inventarios> ListaDeInventarios;
+    ListaDeInventarios = ViewBag.ListaDeInventarios;
+}
+
+<h1>Registrar venta</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CrearVenta">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="NombreCliente" class="control-label"></label>
+                <input asp-for="NombreCliente" class="form-control" />
+                <span asp-validation-for="NombreCliente" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TipoDePago" class="control-label"></label>
+                <input asp-for="TipoDePago" class="form-control" />
+                <span asp-validation-for="TipoDePago" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Registrar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<br /> <br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                    ID
+            </th>
+            <th>
+                Categoría
+            </th>
+            <th>
+                Cantidad
+            </th>
+            <th>
+                Precio
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ListaDeInventarios)
+        {
+            string precio = String.Format("₡ {0:0,0.00}", item.Precio);
+
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.Categoria
+                </td>
+                <td>
+                   @item.Cantidad
+                </td>
+                <td>
+                   @precio
+                </td>
+                <td>
+                    <a href="Inventarios/Edit?id=@item.Id" class="btn-addItem">Agregar</a> |
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
