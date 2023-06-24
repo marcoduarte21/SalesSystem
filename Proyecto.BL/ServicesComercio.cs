@@ -77,7 +77,6 @@ namespace Proyecto.BL
             detalle.Precio = item.Precio;
 
             inventarios.VentaDetalles.Add(detalle);
-
             Connection.Inventarios.Update(inventarios);
             Connection.SaveChanges();
 
