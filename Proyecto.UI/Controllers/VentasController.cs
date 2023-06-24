@@ -48,6 +48,7 @@ namespace Proyecto.UI.Controllers
             return PartialView("DetallesVenta", detalles);
         }
 
+        [HttpPost]
         public JsonResult Inserte(Ventas venta)
         {
 

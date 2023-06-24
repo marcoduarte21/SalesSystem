@@ -54,7 +54,7 @@ namespace Proyecto.BL
             Connection.SaveChanges();
         }
 
-        public void AgregueLaVenta(Ventas venta)
+        public Ventas AgregueLaVenta(Ventas venta)
         {
             venta.Fecha = ObtenerFechaActual();
             venta.UserId = ObtenerElIdUsuarioLogueado();
@@ -63,6 +63,8 @@ namespace Proyecto.BL
 
             Connection.Ventas.Add(venta);
             Connection.SaveChanges();
+
+            return venta;
         }
 
         public VentaDetalles AgregueElInventarioAlDetalle(Inventarios item)

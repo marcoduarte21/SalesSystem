@@ -9,7 +9,7 @@
 <section class="Container">
 <div class="row flex">
     <div class="col-md-4">
-            <form method="get" action="">
+            <form method="post" action="" id="FormVenta">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -86,14 +86,16 @@
                 $("#precio").html($("#Precio").html());
             });
 
-            $("#sendData").click(function () {
+            $("#FormVenta").submit(function () {
 
+                var url = "@Url.Action("Inserte", "Ventas")";
+                var data = $("#FormVenta").serialize();
                 
-                $.get("/Ventas/Inserte", function(data) {
+                $.post(url, data).done(function(data) {
 
-                    if(data != null){
+                   
                         alert("Venta iniciada!");
-                    }
+             
 
                 });
             });
