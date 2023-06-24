@@ -9,7 +9,7 @@
 <section class="Container">
 <div class="row flex">
     <div class="col-md-4">
-        <form asp-controller="Ventas" asp-action="Crear">
+        <form method="get" action="">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -18,7 +18,7 @@
                 <span asp-validation-for="NombreCliente" class="text-danger"></span>
             </div><br />
             <div class="form-group">
-                <input type="submit" value="Registrar" class="btn btn-primary" />
+                <input type="submit" id="sendData" value="Registrar" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -84,6 +84,18 @@
                 $("#id").html($("#Id").html());
                 $("#nombre").html($("#Nombre").html());
                 $("#precio").html($("#Precio").html());
+            });
+
+            $("#sendData").click(function () {
+
+                
+                $.get("/Ventas/Inserte", function(data) {
+
+                    if(data != null){
+                        alert("Venta iniciada!");
+                    }
+
+                });
             });
 
         });

@@ -48,5 +48,13 @@ namespace Proyecto.UI.Controllers
             return PartialView("DetallesVenta", detalles);
         }
 
+        public JsonResult Inserte(Ventas venta)
+        {
+
+            ServicesComercio.AgregueLaVenta(venta);
+
+            return Json(venta);
+        }
+
     }
 }
