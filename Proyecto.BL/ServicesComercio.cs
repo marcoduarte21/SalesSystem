@@ -53,6 +53,30 @@ namespace Proyecto.BL
             Connection.Inventarios.Add(item);
             Connection.SaveChanges();
         }
+        public void AbraLaCaja(Model.AperturasDeCaja caja)
+        {
+
+            bool cajaAbierta = Connection.AperturasDeCaja.Any(a => a.UserId == ObtenerElIdUsuarioLogueado() && a.Estado == EstadoDeLaCaja.ABIERTA);
+
+            if (cajaAbierta)
+            {
+                // El usuario ya tiene una caja abierta, puedes mostrar un mensaje o realizar alguna acción
+                // Aquí puedes agregar tu lógica para manejar el caso cuando el usuario ya tiene una caja abierta
+                // Por ejemplo, mostrar un mensaje de error, lanzar una excepción, etc.
+                Console.WriteLine("Ya tienes una caja abierta.");
+                return;
+            }
+
+
+            caja.FechaDeInicio = ObtenerFechaActual();
+            caja.UserId = ObtenerElIdUsuarioLogueado();
+            caja.Estado = EstadoDeLaCaja.ABIERTA;
+
+            Connection.AperturasDeCaja.Add(caja);
+            Connection.SaveChanges();
+
+        }
+        
 
         public Ventas AgregueLaVenta(Ventas venta)
         {
@@ -149,10 +173,7 @@ namespace Proyecto.BL
             }
         }
 
-        public void CerrarCaja()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public void EditeElItemDelInventario(int idItem, string nombre, Categoria categoria, decimal precio)
         {
@@ -165,6 +186,18 @@ namespace Proyecto.BL
 
             Connection.Inventarios.Update(itemAEditar);
             Connection.SaveChanges();
+        }
+        public void CerrarCaja(int IdCaja)
+        {
+            Model.AperturasDeCaja caja;
+            caja = ObtengaLaCaja(IdCaja);
+            caja.FechaDeCierre = ObtenerFechaActual();
+            caja.Estado = EstadoDeLaCaja.CERRADA;
+
+            Connection.AperturasDeCaja.Update(caja);
+            Connection.SaveChanges();
+
+
         }
 
         public void ElimineElItemDeLaVenta(int id)
@@ -218,6 +251,28 @@ namespace Proyecto.BL
             }
             return null;
         }
+        public AperturasDeCaja ObtengaLaCaja(int id)
+        {
+            foreach (var item in Connection.AperturasDeCaja)
+            {
+                if (item.Id == id)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+        public List<Model.AperturasDeCaja> LaListaDeCaja()
+        {
+            string idUsuarioLogueado = ObtenerElIdUsuarioLogueado(); // Obtener el ID del usuario logueado
+
+            var cajas = Connection.AperturasDeCaja
+                .Where(caja => caja.UserId == idUsuarioLogueado && caja.Estado == EstadoDeLaCaja.ABIERTA)
+                .ToList();
+
+            return cajas;
+        }
+
 
         public List<Model.VentaDetalles> ObtengaLaListaDelDetalleLaVenta()
         {

@@ -17,6 +17,6 @@ namespace Proyecto.BL
         public decimal ApliqueElDescuento(Model.Ventas venta);
         public Model.Ventas ProceseLaVenta(Model.Ventas ventas);
         public void AbrirCaja();
-        public void CerrarCaja();
+        
     }
 }

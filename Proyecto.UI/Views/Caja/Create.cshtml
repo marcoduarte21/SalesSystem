@@ -1,11 +1,28 @@
-﻿
-
-@model Proyecto.Model.AperturasDeCaja
-
+﻿@model Proyecto.Model.AperturasDeCaja
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Abrir Caja";
 }
+<h1>Abir Caja</h1>
 
-<form action="@Url.Action("AbrirCaja", "Caja")" method="post">
-    <button type="submit">Abrir Caja</button>
-    </form>
+<section class="Container">
+<div class="row flex">
+    <div class="col-md-4">
+         <div class="form-group">
+                <label  class="control-label">Presione el botón si desea abrir o cerrar la caja</label><br />
+            </div><br />
+        <form asp-controller="Caja" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input type="submit" value="ABRIR CAJA" class="btn btn-primary" />
+            </div>
+        </form>
+        <br />
+        <div>
+    <a asp-controller ="Caja" asp-action="Index" class="btn-edit">Volver</a>
+</div>
+        
+    </div>
+</div>
+
+</section>
+
