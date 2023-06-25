@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto.UI.Models;
 using System.Diagnostics;
@@ -12,11 +13,13 @@ namespace Proyecto.UI.Controllers
 
         public HomeController(ILogger<HomeController> logger)
         {
+            
             _logger = logger;
         }
 
         public IActionResult Index()
         {
+           
             return View();
         }
 
