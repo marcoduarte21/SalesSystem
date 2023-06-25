@@ -1,24 +1,24 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
-thead{
-    background-color:darkcyan;
+thead {
+    background-color: darkcyan;
     color: white;
 }
 
@@ -62,17 +62,40 @@ thead{
     font-weight: bold;
 }
 
-.Container{
-    display:flex;
-    flex-direction:row;
-    flex-wrap:wrap;
-    justify-content:space-between;
+.Container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
-.flex{
-    width:50%;
+.flex {
+    width: 50%;
 }
 
+#txtCantidad {
+    width: 70px;
+}
 
+.invoice {
+    border-collapse: collapse;
+    width: 100%;
+}
 
+    .invoice td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
 
+    .invoice tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .invoice tr:first-child {
+        font-weight: bold;
+    }
+
+    .invoice .total {
+        font-weight: bold;
+        background-color: #ddd;
+    }
