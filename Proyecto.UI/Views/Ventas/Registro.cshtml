@@ -1,41 +1,88 @@
 ﻿@model Proyecto.Model.Ventas
 @{
     ViewData["Title"] = "Registro de ventas";
+    List<Proyecto.Model.Inventarios> ListaDeInventarios = ViewBag.ListaDeInventarios;
 }
 
 <h1>Registrar venta</h1>
 
 <hr />
 <section class="Container">
-<div class="row flex">
-    <div class="col-md-4">
-            <form method="post" action="" id="FormVenta">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="NombreCliente" class="control-label"></label><br />
-                <input asp-for="NombreCliente" class="form-control" />
-                <span asp-validation-for="NombreCliente" class="text-danger"></span>
-            </div><br />
-            <div class="form-group">
-                <input type="submit" id="sendData" value="Registrar" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-        <br />
-        <button id="ShowInventario" class="btn-edit">Ver inventario</button><br /><br />
-        <div id="ListaDeInventarios">
+    <div class="row flex">
+        <div class="col-md-4">
+            <form method="post" id="FormVenta" action="">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" value="1" />
+                <div class="form-group">
+                    <label asp-for="NombreCliente" class="control-label"></label><br />
+                    <input asp-for="NombreCliente" class="form-control" id="txtNombre" />
+                    <span asp-validation-for="NombreCliente" class="text-danger"></span>
+                </div><br />
+                <div class="form-group">
+                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                </div>
+            </form>
         </div>
-</div>
+    </div>
+
+    <div>
+        <h3>En inventario</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        Nombre
+                    </th>
+                    <th>
+                        Categoría
+                    </th>
+                    <th>
+                        En stock
+                    </th>
+                    <th>
+                        Precio
+                    </th>
+                    <th>
+                        Cantidad
+                    </th>
+                    <th>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ListaDeInventarios)
+                {
+                    <tr>
+                        <td id="txtId">
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td id="txtNombre">
+                            @Html.DisplayFor(modelItem => item.Nombre)
+                        </td>
+                        <td id="txtCategoria">
+                            @Html.DisplayFor(modelItem => item.Categoria)
+                        </td>
+                        <td id="Cantidad">
+                            @Html.DisplayFor(modelItem => item.Cantidad)
+                        </td>
+                        <td id="txtPrecio">
+                            @Html.DisplayFor(modelItem => item.Precio)
+                        </td>
+                        <td>
+                            <input type="number" id="txtCantidad" value="0">
+                        </td>
+                        <td>
+                            <button type="button" id="AddItem" class="btn-addItem">Agregar</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </section>
-
-<div id="ListaDeInventarios">
-
-</div>
-
 <br />
 <h4>Detalle de la venta</h4>
 
@@ -60,47 +107,83 @@
             <th></th>
         </tr>
     </thead>
-    <tbody id="Detalles">
-
+    <tbody>
+        <tr>
+            <td id="NombreDetalle">
+                Nombre
+            </td>
+            <td id="CantidadDetalle">
+                Cantidad
+            </td>
+            <td id="SubtotalDetalle">
+                Subtotal
+            </td>
+            <td id="descuentoDetalle">
+                descuento
+            </td>
+            <td id="totalDescuento">
+                total
+            </td>
+            <td>
+                <button type="button" class="btn-danger">Eliminar</button>
+            </td>
+        </tr>
     </tbody>
+    <tfoot>
+        <tr>
+            <td>Subtotal</td>
+            <td><strong>$100.00</strong></td>
+        </tr>
+        <tr>
+            <td>Monto de Descuento</td>
+            <td><strong>$10.00</strong></td>
+        </tr>
+        <tr class="total">
+            <td>Total</td>
+            <td><strong>$90.00</strong></td>
+        </tr>
+    </tfoot>
 </table>
-
+<label asp-for="TipoDePago" class="control-label"></label>
+<br />
+<select asp-items="@(Html.GetEnumSelectList<Proyecto.Model.TipoDePago>())" asp-for="TipoDePago"></select>
+<span asp-validation-for="TipoDePago" class="text-danger"></span>
+<br />
+<br />
+<button type="button" class="btn-edit">Terminar venta</button>
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
     <script>
 
-        $(document).ready(function() {
-
-            $("#ShowInventario").click(function(){
-
-                $("#ListaDeInventarios").load("ListaInventarios");
-            });
+        $(document).ready(function () {
 
             $("#AddItem").click(function () {
 
-                $("#id").html($("#Id").html());
-                $("#nombre").html($("#Nombre").html());
-                $("#precio").html($("#Precio").html());
+                var subtotal = $("#txtCantidad").val() * parseInt($("#txtPrecio").html());
+
+                $("#NombreDetalle").html($("#txtNombre").html());
+                $("#SubtotalDetalle").html(subtotal);
             });
 
             $("#FormVenta").submit(function () {
 
                 var url = "@Url.Action("Inserte", "Ventas")";
                 var data = $("#FormVenta").serialize();
-                
-                $.post(url, data).done(function(data) {
 
-                   
-                        alert("Venta iniciada!");
-             
+                $.post(url, data).done(function (data) {
 
+                    alert("Venta iniciada!");
                 });
             });
 
+
         });
     </script>
+
 }
 

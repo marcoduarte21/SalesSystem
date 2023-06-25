@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Query;
 using Proyecto.Model;
 
 namespace Proyecto.UI.Controllers
@@ -15,20 +13,15 @@ namespace Proyecto.UI.Controllers
         {
             ServicesComercio = new BL.ServicesComercio(connection, userManager);
         }
-        
 
-        public ActionResult Registro() {
+
+        public ActionResult Registro()
+        {
 
             ViewBag.ListaDeInventarios = ServicesComercio.ObtengaLaListaDeInventarios();
             return View();
         }
 
-
-        public ActionResult Crear(Model.Ventas ventas)
-        {
-            ServicesComercio.AgregueLaVenta(ventas);
-            return View("Registro");
-        }
 
         public IActionResult ListaInventarios()
         {
@@ -51,10 +44,9 @@ namespace Proyecto.UI.Controllers
         [HttpPost]
         public JsonResult Inserte(Ventas venta)
         {
+            var response = ServicesComercio.AgregueLaVenta(venta);
 
-            ServicesComercio.AgregueLaVenta(venta);
-
-            return Json(venta);
+            return Json(response);
         }
 
     }
