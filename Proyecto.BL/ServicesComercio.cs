@@ -173,7 +173,15 @@ namespace Proyecto.BL
             }
         }
 
-        
+        public AperturasDeCaja ObtenerIdCaja(int id)
+        {
+            AperturasDeCaja elResultado;
+
+            elResultado = Connection.AperturasDeCaja.Find(id);
+
+            return elResultado;
+        }
+
 
         public void EditeElItemDelInventario(int idItem, string nombre, Categoria categoria, decimal precio)
         {
@@ -187,17 +195,27 @@ namespace Proyecto.BL
             Connection.Inventarios.Update(itemAEditar);
             Connection.SaveChanges();
         }
-        public void CerrarCaja(int IdCaja)
+        public void AbrirCaja(AperturasDeCaja aperturasDeCaja)
         {
-            Model.AperturasDeCaja caja;
-            caja = ObtengaLaCaja(IdCaja);
-            caja.FechaDeCierre = ObtenerFechaActual();
-            caja.Estado = EstadoDeLaCaja.CERRADA;
+            AperturasDeCaja aperturaParaEditar = ObtenerIdCaja(aperturasDeCaja.Id);
 
-            Connection.AperturasDeCaja.Update(caja);
+            aperturaParaEditar.FechaDeInicio = DateTime.Now;
+            aperturaParaEditar.Estado = EstadoDeLaCaja.ABIERTA;
+            aperturaParaEditar.FechaDeCierre = null;
+
+            Connection.AperturasDeCaja.Update(aperturasDeCaja);
             Connection.SaveChanges();
+        }
 
+        public void CerrarCaja(AperturasDeCaja aperturasDeCaja)
+        {
+            AperturasDeCaja aperturaParaEditar = ObtenerIdCaja(aperturasDeCaja.Id);
 
+            aperturaParaEditar.FechaDeCierre = DateTime.Now;
+            aperturaParaEditar.Estado = EstadoDeLaCaja.CERRADA;
+
+            Connection.AperturasDeCaja.Update(aperturasDeCaja);
+            Connection.SaveChanges();
         }
 
         public void ElimineElItemDeLaVenta(int id)
@@ -372,8 +390,26 @@ namespace Proyecto.BL
             throw new NotImplementedException();
         }
 
+        public List<AperturasDeCaja> ObtengaLaListaDeCajas()
+        {
+            return Connection.AperturasDeCaja.ToList();
+        }
+
+        public void AgregarCaja(AperturasDeCaja aperturasDeCaja)
+        {
+            aperturasDeCaja.FechaDeInicio = DateTime.Now;
+            aperturasDeCaja.UserId = ObtenerElIdUsuarioLogueado();
+            aperturasDeCaja.Estado = EstadoDeLaCaja.ABIERTA;
+
+            Connection.AperturasDeCaja.Add(aperturasDeCaja);
+            Connection.SaveChanges();
+        }
+
+
+
+
     }
 
 
-    
+
 }

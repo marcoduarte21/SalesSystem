@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto.Model;
 
 namespace Proyecto.UI.Controllers
 {
+    [Authorize]
     public class VentasController : Controller
     {
 

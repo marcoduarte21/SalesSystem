@@ -1,54 +1,41 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto.BL;
 using Proyecto.Model;
 
 namespace Proyecto.UI.Controllers
 {
-    
+
+    [Authorize]
     public class CajaController : Controller
     {
-        private readonly ServicesComercio servicesComercio;
+        static string estado;
+        private readonly ServicesComercio _servicesComercio;
 
         public CajaController(DA.DBContexto connection, UserManager<IdentityUser> userManager)
         {
-            servicesComercio = new ServicesComercio(connection, userManager);
+            _servicesComercio = new ServicesComercio(connection, userManager);
         }
 
-
-        public IActionResult Index()
+        public ActionResult Index()
         {
-            List<Model.AperturasDeCaja> lista;
-            lista = servicesComercio.LaListaDeCaja();
-            return View(lista);
+            List<AperturasDeCaja> aperturasDeCajas;
+            aperturasDeCajas = _servicesComercio.ObtengaLaListaDeCajas();
+            return View(aperturasDeCajas);
         }
 
         public ActionResult Create()
         {
             return View();
         }
-        // POST: InventariosController/Create
-        
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(Model.AperturasDeCaja caja)
-        {
-            servicesComercio.AbraLaCaja(caja);
-            return View();
-        }
-        public ActionResult Edit(int id)
-        {
-            Model.AperturasDeCaja item;
-            item = servicesComercio.ObtengaLaCaja(id);
-            return View(item);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(Model.AperturasDeCaja item)
+        public IActionResult Create(AperturasDeCaja aperturasDeCaja)
         {
             try
             {
-                servicesComercio.CerrarCaja(item.Id);
+                _servicesComercio.AgregarCaja(aperturasDeCaja);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -57,8 +44,37 @@ namespace Proyecto.UI.Controllers
             }
         }
 
+        public IActionResult CerrarCaja(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                AperturasDeCaja cerrar = _servicesComercio.ObtenerIdCaja(id);
+                _servicesComercio.CerrarCaja(cerrar);
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        public IActionResult AbrirCaja(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                AperturasDeCaja abrir = _servicesComercio.ObtenerIdCaja(id);
+                _servicesComercio.AbrirCaja(abrir);
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+
+        }
+
+
+
 
     }
-
-    
 }

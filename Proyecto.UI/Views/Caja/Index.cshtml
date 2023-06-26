@@ -6,22 +6,14 @@
 
 <h1>Cajas</h1>
 
-
-
 <p>
-<p>
-    <a asp-controller="Caja" asp-action="Create" class="btn_create">Abrir Caja</a>
-</p>
-
+    <a asp-action="Create">Agregar</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
+                N° de Caja
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FechaDeInicio)
@@ -30,12 +22,14 @@
                 @Html.DisplayNameFor(model => model.FechaDeCierre)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Observaciones)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Estado)
             </th>
-            <th></th>
+            <th>
+
+            </th>
+            <th>
+                Acciones
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -45,25 +39,46 @@
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.FechaDeInicio)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FechaDeCierre)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Observaciones)
-            </td>
-             <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                    <a href="Caja/Edit?id=@item.Id" class="btn-edit">Cerrar Caja</a> |
+                    @if (item.Estado.ToString().Equals("ABIERTA"))
+                    {
+                        @Html.DisplayFor(modelItem => item.Estado)
+                    <td><p><small>@Html.ActionLink("Cerrar Caja", "CerrarCaja", new { id=item.Id})</small></p></td>
+                    <td><button class="btn-edit abrir-caja">Ingresar Caja</button><br /><br /></td>
 
+                        
+                    }else{
+                        @Html.DisplayFor(modelItem => item.Estado)
+                    <td><p><small>@Html.ActionLink("Abrir Caja", "AbrirCaja", new { id=item.Id})</small></p></td>
+                    }
+                
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+
+            $(".abrir-caja").click(function () {
+
+                window.location.href = "/Ventas/Registro";
+
+
+            });
+
+        });
+    </script>
+}

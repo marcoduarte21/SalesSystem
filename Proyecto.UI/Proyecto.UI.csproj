@@ -37,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Proyecto.BL\Proyecto.BL.csproj" />
     <ProjectReference Include="..\Proyecto.DA\Proyecto.DA.csproj" />
+    <ProjectReference Include="..\Proyecto.Model\Proyecto.Model.csproj" />
   </ItemGroup>
 
 </Project>
