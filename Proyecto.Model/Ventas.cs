@@ -24,16 +24,17 @@ namespace Proyecto.Model
         [Required(ErrorMessage = "El campo Tipo de Pago es requerido")]
         public TipoDePago TipoDePago { get; set; }
         [Required(ErrorMessage = "El campo Total es requerido")]
+        [DataType(DataType.Currency)]
         public decimal Total { get; set; }
         [Required(ErrorMessage = "El campo SubTotal es requerido")]
         [DataType(DataType.Currency)]
-        [Range(0, double.MaxValue, ErrorMessage = "El Precio no debe ser menor a 0")]
         public decimal SubTotal { get; set; }
         [Display(Name = "Porcentaje de Descuento")]
         [Required(ErrorMessage = "El campo Porcentaje de Descuento es requerido")]
         public int PorcentajeDesCuento { get; set; }
         [Display(Name = "Monto de Descuento")]
         [Required(ErrorMessage = "El campo Monto de Descuento es requerido")]
+        [DataType(DataType.Currency)]
         public decimal MontoDescuento { get; set; }
         public string UserId { get; set; }
         public EstadoDeLaVenta Estado { get; set; }

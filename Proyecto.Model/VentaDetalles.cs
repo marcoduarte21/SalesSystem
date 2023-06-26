@@ -29,11 +29,14 @@ namespace Proyecto.Model
         public decimal Precio { get; set; }
         [NotMapped]
         [Display(Name = "Subtotal")]
+        [DataType(DataType.Currency)]
         public decimal SubTotal { get; set; }
         [Display(Name = "Total")]
+        [DataType(DataType.Currency)]
         public decimal Monto { get; set; }
         [Display(Name = "Monto de Descuento")]
         [Required(ErrorMessage = "El campo Monto de Descuento es requerido")]
+        [DataType(DataType.Currency)]
         public decimal MontoDescuento { get; set; }
     }
 }
