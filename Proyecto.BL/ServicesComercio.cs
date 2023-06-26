@@ -12,13 +12,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 
 namespace Proyecto.BL
 {
     public class ServicesComercio : IServicesComercio
     {
 
-        DA.DBContexto Connection;
+        public DA.DBContexto Connection;
         UserManager<IdentityUser> _userManager;
 
         public ServicesComercio(DA.DBContexto connection, UserManager<IdentityUser> userManager)
@@ -45,6 +46,11 @@ namespace Proyecto.BL
 
             Connection.AperturasDeCaja.Add(nuevaApertura);
             Connection.SaveChanges();
+        }
+
+        public List<Model.Ventas> ObtengaLaListaDeVentas()
+        {
+            return Connection.Ventas.ToList();
         }
 
         public void AgregueElItemAlInventario(Inventarios item)
@@ -78,7 +84,7 @@ namespace Proyecto.BL
         }
         
 
-        public Ventas AgregueLaVenta(Ventas venta)
+        public void AgregueLaVenta(Ventas venta)
         {
             venta.Fecha = ObtenerFechaActual();
             venta.UserId = ObtenerElIdUsuarioLogueado();
@@ -88,51 +94,38 @@ namespace Proyecto.BL
             Connection.Ventas.Add(venta);
             Connection.SaveChanges();
 
-            return venta;
         }
 
-        public VentaDetalles AgregueElInventarioAlDetalle(Inventarios item)
-        {
-            Model.VentaDetalles detalle = new VentaDetalles();
-            Model.Inventarios inventarios;
-            inventarios = ObtengaElItemDelInventario(item.Id);
-            inventarios.VentaDetalles = new List<Model.VentaDetalles>();
-
-            detalle.Inventarios.Nombre = item.Nombre;
-            detalle.Id_Inventario = item.Id;
-            detalle.Precio = item.Precio;
-
-            inventarios.VentaDetalles.Add(detalle);
-            Connection.Inventarios.Update(inventarios);
-            Connection.SaveChanges();
-
-            return detalle;
-            
-        }
-
-
-        public VentaDetalles AgregueElItemALaVenta(Model.VentaDetalles detalle)
+      
+        public void AgregueElItemALaVenta(Model.VentaDetalles detalle, Model.Inventarios item)
         {
             Model.VentaDetalles ventaDetalles = new VentaDetalles();
             Model.Ventas venta;
+            Model.Inventarios inventario;
 
             venta = ObtengaLaVentaPorElId(detalle.Id_Venta);
             venta.VentaDetalles = new List<Model.VentaDetalles>();
 
-            detalle.SubTotal = ObtengaElSubTotalDelItemDeLaVenta(detalle);
-            detalle.Monto = ObtengaElTotalDelItemDeLaVenta(detalle);
+            ventaDetalles.Id_Venta = detalle.Id_Venta;
+            ventaDetalles.Id_Inventario = detalle.Id_Inventario;
+            ventaDetalles.Precio = detalle.Precio;
+            ventaDetalles.Cantidad = detalle.Cantidad;
+            ventaDetalles.Monto = ObtengaElTotalDelItemDeLaVenta(ventaDetalles);
 
-            ventaDetalles = detalle;
+            venta.SubTotal += ventaDetalles.Monto;
+            venta.Total += ventaDetalles.Monto;
+
+            inventario = ObtengaElItemDelInventario(item.Id);
+            inventario.Cantidad = inventario.Cantidad - ventaDetalles.Cantidad;
 
             venta.VentaDetalles.Add(ventaDetalles);
+            Connection.Inventarios.Update(inventario);
             Connection.Ventas.Update(venta);
             Connection.SaveChanges();
 
-            return ventaDetalles;
-
         }
 
-        private decimal ObtengaElSubTotalDelItemDeLaVenta(VentaDetalles detalle)
+        private decimal ObtengaElTotalDelItemDeLaVenta(VentaDetalles detalle)
         {
             decimal subtotal;
             subtotal = detalle.Precio * detalle.Cantidad;
@@ -140,48 +133,72 @@ namespace Proyecto.BL
             return subtotal;
         }
 
-        private decimal ObtengaElTotalDelItemDeLaVenta(VentaDetalles detalle)
+        public void ApliqueElDescuento(Model.Ventas ventas)
         {
-            decimal total;
-            total = detalle.SubTotal - detalle.MontoDescuento;
 
-            return total;
-        }
-
-        private decimal ObtengaElTotalDeLaVenta(Model.Ventas venta)
-        {
-            venta.Total = venta.SubTotal - ApliqueElDescuento(venta);
-            return venta.Total;
-        }
-
-        public decimal ApliqueElDescuento(Model.Ventas venta)
-        {
+            int subtotal = (int)ventas.SubTotal;
+            Model.Ventas venta;
+            venta = ObtengaLaVentaPorElId(ventas.Id);
+           
+            venta.PorcentajeDesCuento = ventas.PorcentajeDesCuento;
+            venta.SubTotal = subtotal;
 
             venta.MontoDescuento = venta.SubTotal * (venta.PorcentajeDesCuento / 100);
-            return venta.MontoDescuento;
+            venta.Total = venta.SubTotal - venta.MontoDescuento;
+
+            foreach(var item in Connection.VentaDetalles)
+            {
+                if(item.Id_Venta == venta.Id)
+                {
+                    item.MontoDescuento = item.Monto * (venta.PorcentajeDesCuento / 100);
+                    item.Monto -= item.MontoDescuento;
+                    Connection.VentaDetalles.Update(item);
+                }
+            }
+          
+            Connection.Ventas.Update(venta);
+            Connection.SaveChanges();
         }
 
-        public void ElimineElItemDelDetalle(int id)
+        public void ElimineElItemDelDetalle(int id, int IdInventario, int idVenta)
         {
+            Model.Inventarios inventarios;
+            Model.VentaDetalles ventaDetalles;
+            Model.Ventas venta;
+            venta = ObtengaLaVentaPorElId(idVenta);
+            ventaDetalles = ObtengaElItemDelDetalle(id);
+            inventarios = ObtengaElItemDelInventario(IdInventario);
 
             foreach(var item in Connection.VentaDetalles)
             {
                 if(item.Id == id)
                 {
+                    inventarios.Cantidad = inventarios.Cantidad + ventaDetalles.Cantidad;
+                    venta.SubTotal -= ventaDetalles.Monto;
+                    venta.MontoDescuento -= ventaDetalles.MontoDescuento;
+                    venta.Total -= (ventaDetalles.Monto - ventaDetalles.MontoDescuento);
+
+                    Connection.Ventas.Update(venta);
+                    Connection.Inventarios.Update(inventarios);
                     Connection.VentaDetalles.Remove(item);
                 }
             }
+            Connection.SaveChanges();
         }
 
-        public AperturasDeCaja ObtenerIdCaja(int id)
+
+        public VentaDetalles ObtengaElItemDelDetalle(int id)
         {
-            AperturasDeCaja elResultado;
-
-            elResultado = Connection.AperturasDeCaja.Find(id);
-
-            return elResultado;
+            foreach (var item in Connection.VentaDetalles)
+            {
+                if (item.Id == id)
+                {
+                    return item;
+                }
+            }
+            return null;
         }
-
+        
 
         public void EditeElItemDelInventario(int idItem, string nombre, Categoria categoria, decimal precio)
         {
@@ -195,27 +212,17 @@ namespace Proyecto.BL
             Connection.Inventarios.Update(itemAEditar);
             Connection.SaveChanges();
         }
-        public void AbrirCaja(AperturasDeCaja aperturasDeCaja)
+        public void CerrarCaja(int IdCaja)
         {
-            AperturasDeCaja aperturaParaEditar = ObtenerIdCaja(aperturasDeCaja.Id);
+            Model.AperturasDeCaja caja;
+            caja = ObtengaLaCaja(IdCaja);
+            caja.FechaDeCierre = ObtenerFechaActual();
+            caja.Estado = EstadoDeLaCaja.CERRADA;
 
-            aperturaParaEditar.FechaDeInicio = DateTime.Now;
-            aperturaParaEditar.Estado = EstadoDeLaCaja.ABIERTA;
-            aperturaParaEditar.FechaDeCierre = null;
-
-            Connection.AperturasDeCaja.Update(aperturasDeCaja);
+            Connection.AperturasDeCaja.Update(caja);
             Connection.SaveChanges();
-        }
 
-        public void CerrarCaja(AperturasDeCaja aperturasDeCaja)
-        {
-            AperturasDeCaja aperturaParaEditar = ObtenerIdCaja(aperturasDeCaja.Id);
 
-            aperturaParaEditar.FechaDeCierre = DateTime.Now;
-            aperturaParaEditar.Estado = EstadoDeLaCaja.CERRADA;
-
-            Connection.AperturasDeCaja.Update(aperturasDeCaja);
-            Connection.SaveChanges();
         }
 
         public void ElimineElItemDeLaVenta(int id)
@@ -292,23 +299,35 @@ namespace Proyecto.BL
         }
 
 
-        public List<Model.VentaDetalles> ObtengaLaListaDelDetalleLaVenta()
+        public List<Model.VentaDetalles> ObtengaLaListaDelDetalleLaVenta(int idVenta)
         {
 
             var lista = from detalle in Connection.VentaDetalles
-                        join inventario in Connection.Inventarios 
-                        on detalle.Id_Inventario equals inventario.Id
                         join venta in Connection.Ventas on detalle.Id_Venta equals venta.Id
+                        where detalle.Id_Venta == idVenta
                         select detalle;
 
             return (List < Model.VentaDetalles >) lista.ToList();
         }
 
 
-        public List<Inventarios> ObtengaLaListaDeInventarios()
+        public List<Model.Inventarios> ObtengaLaListaDeInventarios()
         {
-            return Connection.Inventarios.ToList();
+            var lista = from inventario in Connection.Inventarios
+                        select inventario;
+
+            if (lista.Count() > 0)
+            {
+
+                return (List<Model.Inventarios>)lista.ToList();
+            }
+            else
+            {
+                return null;
+            }
         }
+
+
 
         public List<Model.Inventarios> ObtengaLaListaDeInventariosPorElNombre(string nombre)
         {
@@ -382,18 +401,66 @@ namespace Proyecto.BL
 
         public Ventas ObtengaLaVentaPorElId(int id)
         {
-            throw new NotImplementedException();
+            foreach (var item in Connection.Ventas)
+            {
+                if (item.Id == id)
+                {
+                    return item;
+                }
+            }
+            return null;
         }
 
-        public Ventas ProceseLaVenta(Ventas ventas)
+        public void ProceseLaVenta(Ventas ventas)
         {
-            throw new NotImplementedException();
+            Model.Ventas venta;
+            venta = ObtengaLaVentaPorElId(ventas.Id);
+
+            venta.Estado = EstadoDeLaVenta.Terminada;
+            venta.TipoDePago = ventas.TipoDePago;
+
+            Connection.Ventas.Update(venta);
+            Connection.SaveChanges();
+            
         }
 
         public List<AperturasDeCaja> ObtengaLaListaDeCajas()
         {
             return Connection.AperturasDeCaja.ToList();
         }
+
+        public void CerrarCaja(AperturasDeCaja aperturasDeCaja)
+        {
+            AperturasDeCaja aperturaParaEditar = ObtenerIdCaja(aperturasDeCaja.Id);
+
+            aperturaParaEditar.FechaDeCierre = DateTime.Now;
+            aperturaParaEditar.Estado = EstadoDeLaCaja.CERRADA;
+
+            Connection.AperturasDeCaja.Update(aperturasDeCaja);
+            Connection.SaveChanges();
+        }
+
+        public AperturasDeCaja ObtenerIdCaja(int id)
+        {
+            AperturasDeCaja elResultado;
+
+            elResultado = Connection.AperturasDeCaja.Find(id);
+
+            return elResultado;
+        }
+
+        public void AbrirCaja(AperturasDeCaja aperturasDeCaja)
+        {
+            AperturasDeCaja aperturaParaEditar = ObtenerIdCaja(aperturasDeCaja.Id);
+
+            aperturaParaEditar.FechaDeInicio = DateTime.Now;
+            aperturaParaEditar.Estado = EstadoDeLaCaja.ABIERTA;
+            aperturaParaEditar.FechaDeCierre = null;
+
+            Connection.AperturasDeCaja.Update(aperturasDeCaja);
+            Connection.SaveChanges();
+        }
+
 
         public void AgregarCaja(AperturasDeCaja aperturasDeCaja)
         {
@@ -404,8 +471,6 @@ namespace Proyecto.BL
             Connection.AperturasDeCaja.Add(aperturasDeCaja);
             Connection.SaveChanges();
         }
-
-
 
 
     }

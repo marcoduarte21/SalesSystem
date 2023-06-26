@@ -35,6 +35,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Views\Ventas\DetallesVenta.cshtml" />
+    <None Include="Views\Ventas\ListaInventarios.cshtml" />
+    <None Include="Views\Ventas\Registro.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Proyecto.BL\Proyecto.BL.csproj" />
     <ProjectReference Include="..\Proyecto.DA\Proyecto.DA.csproj" />
     <ProjectReference Include="..\Proyecto.Model\Proyecto.Model.csproj" />

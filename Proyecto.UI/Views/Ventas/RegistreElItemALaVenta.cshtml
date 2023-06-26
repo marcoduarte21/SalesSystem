@@ -1,0 +1,70 @@
+﻿@model Proyecto.Model.VentaDetalles
+
+@{
+    ViewData["Title"] = "Registro items";
+    List<Proyecto.Model.Inventarios> listaInventarios = ViewBag.ListaInventarios;
+}
+
+<h1>Registro de items</h1>
+
+<hr />
+<section class="Container">
+<div class="row flex">
+    <div class="col-md-4">
+        <form asp-action="RegistreElItemALaVenta">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                
+                <input type="hidden" asp-for="Id_Venta" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Producto</label>
+                <select asp-for="Id_Inventario" class="form-control">
+                    @foreach(var item in listaInventarios){
+                    <option value="@item.Id">@item.Nombre -- Stock:@item.Cantidad</option>
+                    }
+                </select>
+                
+            </div>
+            <div class="form-group">
+                <label asp-for="Cantidad" class="control-label"></label>
+                <input asp-for="Cantidad" class="form-control" />
+                <span asp-validation-for="Cantidad" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Registrar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+    <div>
+        <button type="button" class="btn-edit" id="ShowInventario">Ver Inventario</button>
+        <div id="ListaInventario">
+
+        </div>
+    </div>
+</section>
+<div>
+    <a asp-action="Index">Regresar a la lista</a>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
+        <script>
+            $(document).ready(function () {
+
+                $("#ShowInventario").click(function () {
+
+                    $("#ListaInventario").load("/Ventas/ListaInventarios");
+                });
+
+            });
+        </script>
+    }
+
+    
+}
+
