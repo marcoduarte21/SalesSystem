@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Proyecto.DA;
 using Proyecto.UI.Controllers;
 
@@ -23,12 +24,18 @@ namespace Proyecto.UI.Controllers
 
 
         // GET: AjusteInventariosController
-        public ActionResult Index(string nombre)
+        public async Task< ActionResult> Index(string nombre)
         {
+            var clientehttp = new HttpClient();
+            List<Model.Inventarios> lista;
+
+
             if (nombre == null)
             {
-                List<Model.Inventarios> lista;
-                lista = ServiciosDelComercio.ObtengaLaListaDeInventarios();
+                var respuesta = await clientehttp.GetAsync("https://localhost:7273/api/ServicioAjusteDeInventario/ObtengaLaListaDeAjusteDeInventario");
+                string respuestaDelApi = await respuesta.Content.ReadAsStringAsync();
+                lista = JsonConvert.DeserializeObject<List<Model.Inventarios>>(respuestaDelApi);
+                
                 return View(lista);
             }
             else
