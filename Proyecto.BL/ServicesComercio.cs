@@ -45,10 +45,16 @@ namespace Proyecto.BL
             return Connection.Ventas.ToList();
         }
 
-        public void AgregueElItemAlInventario(Inventarios item)
+        public void AgregueElItemAlInventario(InventariosParaAgregar item)
         {
+            Model.Inventarios itemDelInventario = new Inventarios();
+            itemDelInventario.Id = item.Id;
+            itemDelInventario.Nombre = item.Nombre;
+            itemDelInventario.Categoria = item.Categoria;
+            itemDelInventario.Precio = item.Precio;
+            itemDelInventario.Cantidad = 0;
             item.Cantidad = 0;
-            Connection.Inventarios.Add(item);
+            Connection.Inventarios.Add(itemDelInventario);
             Connection.SaveChanges();
         }
         public void AbraLaCaja(Model.AperturasDeCaja caja)

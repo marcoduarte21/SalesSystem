@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json;
 using Proyecto.UI.Models;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 
 namespace Proyecto.UI.Controllers
 {
@@ -21,12 +24,18 @@ namespace Proyecto.UI.Controllers
 
 
         // GET: InventariosController
-        public ActionResult Index(string nombre)
+        public async Task<IActionResult> Index(string nombre)
         {
-            if(nombre == null)
+            var clientehttp = new HttpClient();
+            List<Model.Inventarios> lista;
+
+
+            if (nombre == null)
             {
-                List<Model.Inventarios> lista;
-                lista = ServiciosDelComercio.ObtengaLaListaDeInventarios();
+                var respuesta = await clientehttp.GetAsync("https://localhost:7273/api/ServicioDeInventarios/ObtengaLaListaDeInventarios");
+                string respuestaDelApi = await respuesta.Content.ReadAsStringAsync();
+                lista = JsonConvert.DeserializeObject<List<Model.Inventarios>>(respuestaDelApi);
+
                 return View(lista);
             }
             else
@@ -38,11 +47,29 @@ namespace Proyecto.UI.Controllers
         }
 
         // GET: InventariosController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
             Model.Inventarios item;
-            item = ServiciosDelComercio.ObtengaElItemDelInventario(id);
+            var clientehttp = new HttpClient();
+
+            var query = new Dictionary<string, string>()
+            {
+
+                ["id"] = id.ToString()
+            };
+
+            var uri = QueryHelpers.AddQueryString("https://localhost:7273/api/ServicioDeInventarios/ObtengaElInventarioPorId", query);
+
+            var respuesta = await clientehttp.GetAsync(uri);
+            string respuestaDelApi = await respuesta.Content.ReadAsStringAsync();
+
+            item = JsonConvert.DeserializeObject<Proyecto.Model.Inventarios>(respuestaDelApi);
+
+
+
             return View(item);
+
+
         }
 
         // GET: InventariosController/Create
@@ -54,42 +81,84 @@ namespace Proyecto.UI.Controllers
         // POST: InventariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Model.Inventarios item)
+        public async Task<IActionResult> Create(Model.Inventarios item)
         {
             try
             {
-                ServiciosDelComercio.AgregueElItemAlInventario(item);
+                var httpClient = new HttpClient();
+
+                string json = JsonConvert.SerializeObject(item);
+                var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                await httpClient.PostAsync("https://localhost:7273/api/ServicioDeInventarios/AgregueElItemAlInventario", byteContent);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
                 return View();
             }
+
+
         }
 
         // GET: InventariosController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             Model.Inventarios item;
-            item = ServiciosDelComercio.ObtengaElItemDelInventario(id);
-            item.Precio = (int)item.Precio;
+            var clientehttp = new HttpClient();
+
+            var query = new Dictionary<string, string>()
+            {
+
+                ["id"] = id.ToString()
+            };
+
+            var uri = QueryHelpers.AddQueryString("https://localhost:7273/api/ServicioDeInventarios/ObtengaElInventarioPorId", query);
+
+            var respuesta = await clientehttp.GetAsync(uri);
+            string respuestaDelApi = await respuesta.Content.ReadAsStringAsync();
+
+            item = JsonConvert.DeserializeObject<Proyecto.Model.Inventarios>(respuestaDelApi);
+
+
+
             return View(item);
         }
 
         // POST: InventariosController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Model.Inventarios item)
+        public async Task<ActionResult> Edit(Model.Inventarios item)
         {
             try
             {
-                ServiciosDelComercio.EditeElItemDelInventario(item.Id, item.Nombre, item.Categoria, item.Precio);
+                Model.InventariosParaAgregar itemParaEditar = new Model.InventariosParaAgregar();
+                itemParaEditar.Id = item.Id;
+                itemParaEditar.Nombre = item.Nombre;
+                itemParaEditar.Categoria = item.Categoria;
+                itemParaEditar.Precio = item.Precio;
+
+
+                var httpClient = new HttpClient();
+                string json = JsonConvert.SerializeObject(itemParaEditar);
+
+                var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response = await httpClient.PutAsync("https://localhost:7273/api/ServicioDeInventarios/EditarItemDelInventario", byteContent);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
                 return View();
             }
+
         }
 
 
