@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<Proyecto.DA.DBContexto>(options =>options.UseSqlServer(connectionString));
 //--------------------------------------------------------------------------------------------------------
+
 
 var app = builder.Build();
 

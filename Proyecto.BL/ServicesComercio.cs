@@ -20,14 +20,6 @@ namespace Proyecto.BL
     {
 
         public DA.DBContexto Connection;
-        UserManager<IdentityUser> _userManager;
-
-        public ServicesComercio(DA.DBContexto connection, UserManager<IdentityUser> userManager)
-        {
-            _userManager = userManager;
-            Connection = connection;
-
-        }
 
         public ServicesComercio(DA.DBContexto connection)
         {
@@ -237,7 +229,7 @@ namespace Proyecto.BL
            
             if (user?.Identity?.IsAuthenticated == true)
             {
-                string userName = _userManager.GetUserId(user);
+                string userName = user.Identity?.Name;
                 return userName;
             }
             else
@@ -251,10 +243,9 @@ namespace Proyecto.BL
         {
             var httpContextAccessor = new HttpContextAccessor();
             var user = httpContextAccessor.HttpContext?.User;
-
             if (user?.Identity?.IsAuthenticated == true)
             {
-                string userName = _userManager.GetUserName(user);
+                string userName = user?.Identity?.Name;
                 return userName;
             }
             else
@@ -338,7 +329,7 @@ namespace Proyecto.BL
             return ListaFiltrada;
         }
 
-        public void AgregueElNuevoAjusteDeInventario(AjusteDeInventarios NuevoAjuste)
+        public void AgregueElNuevoAjusteDeInventario(AjusteDeInventarioParaAgregar NuevoAjuste)
         {
 
             Model.Inventarios itemDelInventario;
@@ -360,7 +351,7 @@ namespace Proyecto.BL
             Connection.SaveChanges();
         }
 
-        public int RetorneLaCantidadFinal(Model.AjusteDeInventarios NuevoAjuste, Model.Inventarios itemDelInventario)
+        public int RetorneLaCantidadFinal(Model.AjusteDeInventarioParaAgregar NuevoAjuste, Model.Inventarios itemDelInventario)
         {
 
             if (NuevoAjuste.Tipo == TipoDeAjuste.Aumento)

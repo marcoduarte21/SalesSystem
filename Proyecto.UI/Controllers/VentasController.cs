@@ -12,9 +12,9 @@ namespace Proyecto.UI.Controllers
 
         BL.ServicesComercio ServicesComercio;
 
-        public VentasController(DA.DBContexto connection, UserManager<IdentityUser> userManager)
+        public VentasController(DA.DBContexto connection)
         {
-            ServicesComercio = new BL.ServicesComercio(connection, userManager);
+            ServicesComercio = new BL.ServicesComercio(connection);
 
             List<Model.Inventarios> inventarios = ServicesComercio.ObtengaLaListaDeInventarios();
             ViewBag.ListaInventarios = inventarios;

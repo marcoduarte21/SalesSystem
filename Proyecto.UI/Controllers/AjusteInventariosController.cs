@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using Proyecto.DA;
 using Proyecto.UI.Controllers;
+using System.Net.Http.Headers;
 
 namespace Proyecto.UI.Controllers
 {
@@ -14,17 +16,20 @@ namespace Proyecto.UI.Controllers
 
         DA.DBContexto DBContexto;
         BL.ServicesComercio ServiciosDelComercio;
+        private readonly UserManager<IdentityUser> _UserManager;
 
-        public AjusteInventariosController(DA.DBContexto connection, UserManager<IdentityUser> userManager)
+
+        public AjusteInventariosController(DA.DBContexto connection, UserManager<IdentityUser> _userManager)
         {
             
             DBContexto = connection;
-            ServiciosDelComercio = new BL.ServicesComercio(connection, userManager);
+            ServiciosDelComercio = new BL.ServicesComercio(connection);
+            _UserManager = _userManager;
         }
 
 
         // GET: AjusteInventariosController
-        public async Task< ActionResult> Index(string nombre)
+        public async Task<IActionResult> Index(string nombre)
         {
             var clientehttp = new HttpClient();
             List<Model.Inventarios> lista;
@@ -32,7 +37,7 @@ namespace Proyecto.UI.Controllers
 
             if (nombre == null)
             {
-                var respuesta = await clientehttp.GetAsync("https://localhost:7273/api/ServicioAjusteDeInventario/ObtengaLaListaDeAjusteDeInventario");
+                var respuesta = await clientehttp.GetAsync("https://localhost:7273/api/ServicioAjusteDeInventario/ObtengaLaListaDeAjusteDeInventarios");
                 string respuestaDelApi = await respuesta.Content.ReadAsStringAsync();
                 lista = JsonConvert.DeserializeObject<List<Model.Inventarios>>(respuestaDelApi);
                 
@@ -63,29 +68,64 @@ namespace Proyecto.UI.Controllers
         }
 
         // GET: AjusteInventariosController/Create
-        public ActionResult Create(int id)
+        public async Task<ActionResult> CreateAsync(int id)
         {
 
             Model.Inventarios itemSeleccionado;
             Model.AjusteDeInventarios itemAjuste;
-            itemSeleccionado = ServiciosDelComercio.ObtengaElItemDelInventario(id);
+
+            //itemSeleccionado = ServiciosDelComercio.ObtengaElItemDelInventario(id);
+
+            //itemAjuste = new Model.AjusteDeInventarios
+            //{
+            //    Id_Inventario = id,
+            //    CantidadActual = itemSeleccionado.Cantidad,
+            //};
+
+            var clientehttp = new HttpClient();
+
+            var query = new Dictionary<string, string>()
+            {
+
+                ["id"] = id.ToString()
+            };
+                                 
+            var uri = QueryHelpers.AddQueryString("https://localhost:7273/api/ServicioAjusteDeInventario/ObtengaElInventarioPorId", query);
+
+            var respuesta = await clientehttp.GetAsync(uri);
+            string respuestaDelApi = await respuesta.Content.ReadAsStringAsync();
+
+            itemSeleccionado = JsonConvert.DeserializeObject<Proyecto.Model.Inventarios>(respuestaDelApi);
 
             itemAjuste = new Model.AjusteDeInventarios
             {
                 Id_Inventario = id,
-                CantidadActual = itemSeleccionado.Cantidad,
+                
             };
+
             return View(itemAjuste);
         }
 
         // POST: AjusteInventariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Model.AjusteDeInventarios item)
+        public async Task<IActionResult> Create(Model.AjusteDeInventarios item)
         {
             try
             {
-                ServiciosDelComercio.AgregueElNuevoAjusteDeInventario(item);
+
+                //ServiciosDelComercio.AgregueElNuevoAjusteDeInventario(item);
+                var clienteHttp = new HttpClient();
+
+                string json = JsonConvert.SerializeObject(item);
+                var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");  //Revisar la linea " System.Net.Http.Headers"
+
+               var response = await clienteHttp.PostAsync("https://localhost:7273/api/ServicioAjusteDeInventario/RegistreUnAjusteDeInventario", byteContent);
+
+
                 return RedirectToAction(nameof(Index));
             }
             catch

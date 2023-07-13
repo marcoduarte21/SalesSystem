@@ -12,22 +12,38 @@ namespace Proyecto.SI.Controllers
     {
         DA.DBContexto DBContexto;
         BL.ServicesComercio ServiciosDelComercio;
+       
+
         public ServicioAjusteDeInventario(DA.DBContexto connection)
         {
+
             DBContexto = connection;
             ServiciosDelComercio = new BL.ServicesComercio(connection);
+           
         }
 
-        [HttpGet("ObtengaLaListaDeAjusteDeInventario")]
-        public List<Model.Inventarios>ObtengaLaListaDeInventario()
+        [HttpGet("ObtengaLaListaDeAjusteDeInventarios")]
+        public List<Model.Inventarios>ObtengaLaListaDeInventarios()
         {
-
-
-
-            List<Model.Inventarios> lista;
-            lista = ServiciosDelComercio.ObtengaLaListaDeInventarios();
-            return lista;
+            return ServiciosDelComercio.ObtengaLaListaDeInventarios();
         }
+
+        // GET api/<MenuController>/5
+        [HttpGet("ObtengaElInventarioPorId")]
+        public Proyecto.Model.Inventarios ObtengaElInventarioPorId(int id)
+        {
+            Model.Inventarios elResultado;
+            elResultado = ServiciosDelComercio.ObtengaElItemDelInventario(id);
+            return elResultado;
+        }
+
+        [HttpPost("RegistreUnAjusteDeInventario")]
+        public IActionResult RegristreUnAjusteDeInventario([FromBody] Model.AjusteDeInventarioParaAgregar ajusteDeInventario)
+        {
+            ServiciosDelComercio.AgregueElNuevoAjusteDeInventario(ajusteDeInventario);
+            return Ok(ajusteDeInventario);
+        }
+
 
 
     }

@@ -13,9 +13,9 @@ namespace Proyecto.UI.Controllers
         static string estado;
         private readonly ServicesComercio _servicesComercio;
 
-        public CajaController(DA.DBContexto connection, UserManager<IdentityUser> userManager)
+        public CajaController(DA.DBContexto connection)
         {
-            _servicesComercio = new ServicesComercio(connection, userManager);
+            _servicesComercio = new ServicesComercio(connection);
         }
 
         public ActionResult Index()
