@@ -85,7 +85,6 @@ namespace Proyecto.BL
         public void AgregueLaVenta(Ventas venta)
         {
             venta.Fecha = ObtenerFechaActual();
-            venta.UserId = ObtenerElIdUsuarioLogueado();
             venta.IdAperturaDeCaja = 1;
             venta.Estado = EstadoDeLaVenta.EnProceso;
 
@@ -95,7 +94,7 @@ namespace Proyecto.BL
         }
 
       
-        public void AgregueElItemALaVenta(Model.VentaDetalles detalle, Model.Inventarios item)
+        public void AgregueElItemALaVenta(Model.VentaDetalles detalle)
         {
             Model.VentaDetalles ventaDetalles = new VentaDetalles();
             Model.Ventas venta;
@@ -113,7 +112,7 @@ namespace Proyecto.BL
             venta.SubTotal += ventaDetalles.Monto;
             venta.Total += ventaDetalles.Monto;
 
-            inventario = ObtengaElItemDelInventario(item.Id);
+            inventario = ObtengaElItemDelInventario(detalle.Id_Inventario);
             inventario.Cantidad = inventario.Cantidad - ventaDetalles.Cantidad;
 
             venta.VentaDetalles.Add(ventaDetalles);

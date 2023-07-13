@@ -11,21 +11,15 @@ namespace Proyecto.UI.Controllers
     {
 
         BL.ServicesComercio ServicesComercio;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public VentasController(DA.DBContexto connection)
+        public VentasController(DA.DBContexto connection, UserManager<IdentityUser> userManager)
         {
             ServicesComercio = new BL.ServicesComercio(connection);
 
             List<Model.Inventarios> inventarios = ServicesComercio.ObtengaLaListaDeInventarios();
             ViewBag.ListaInventarios = inventarios;
-        }
-
-
-        public ActionResult Registro()
-        {
-
-            ViewBag.ListaDeInventarios = ServicesComercio.ObtengaLaListaDeInventarios();
-            return View();
+            _userManager = userManager;
         }
 
         public ActionResult Index()
@@ -65,6 +59,7 @@ namespace Proyecto.UI.Controllers
         {
             try
             {
+                venta.UserId = _userManager.GetUserName(this.User);
                 ServicesComercio.AgregueLaVenta(venta);
                 return RedirectToAction(nameof(Index));
             }
@@ -99,8 +94,8 @@ namespace Proyecto.UI.Controllers
                 inventarios = ServicesComercio.ObtengaElItemDelInventario(detalles.Id_Inventario);
                 detalles.Precio = inventarios.Precio;
 
-                
-                ServicesComercio.AgregueElItemALaVenta(detalles, inventarios);
+
+                ServicesComercio.AgregueElItemALaVenta(detalles);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -120,7 +115,7 @@ namespace Proyecto.UI.Controllers
 
         public ActionResult Edit(int id)
         {
-            
+
             return View();
         }
 
@@ -163,6 +158,6 @@ namespace Proyecto.UI.Controllers
                 return View();
             }
         }
-        
+
     }
 }
