@@ -1,8 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MathNet.Numerics.Distributions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json;
 using Proyecto.Model;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace Proyecto.UI.Controllers
 {
@@ -22,11 +27,16 @@ namespace Proyecto.UI.Controllers
             _userManager = userManager;
         }
 
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
 
+            var httpClient = new HttpClient();
             List<Model.Ventas> lista;
-            lista = ServicesComercio.ObtengaLaListaDeVentas();
+
+
+            var respuesta = await httpClient.GetAsync("https://localhost:7273/api/VentasAPI/GetVentas");
+            string apiRespuesta = await respuesta.Content.ReadAsStringAsync();
+            lista = JsonConvert.DeserializeObject<List<Model.Ventas>>(apiRespuesta);
 
             return View(lista);
         }
@@ -40,27 +50,42 @@ namespace Proyecto.UI.Controllers
         }
 
 
-        public ActionResult DetallesVenta(int id)
+        public async Task <IActionResult> DetallesVenta(int id)
         {
             List<Model.VentaDetalles> lista;
+            var httpCliente = new HttpClient();
+
+            var respuesta = await httpCliente.GetAsync("https://localhost:7273/api/VentasAPI/GetDetallesVenta");
+            string apiRespuesta = await respuesta.Content.ReadAsStringAsync();
+            lista = JsonConvert.DeserializeObject<List<Model.VentaDetalles>>(apiRespuesta);
+
             lista = ServicesComercio.ObtengaLaListaDelDetalleLaVenta(id);
             return View(lista);
         }
 
         public ActionResult RegistreLaVenta()
         {
+            
             return View();
         }
 
         // POST: InventariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult RegistreLaVenta(Model.Ventas venta)
+        public async Task<IActionResult> RegistreLaVenta(Model.VentaParaIniciar venta)
         {
             try
             {
-                venta.UserId = _userManager.GetUserName(this.User);
-                ServicesComercio.AgregueLaVenta(venta);
+                var httpClient = new HttpClient();
+                
+                venta.UserId = _userManager.GetUserName(User);
+                string json = JsonConvert.SerializeObject(venta);
+                var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                await httpClient.PostAsync("https://localhost:7273/api/VentasAPI/CreateVenta", byteContent);
+                
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -69,14 +94,32 @@ namespace Proyecto.UI.Controllers
             }
         }
 
-        public ActionResult RegistreElItemALaVenta(int id)
+        public async Task<ActionResult> RegistreElItemALaVenta(int id)
         {
             Model.VentaDetalles detalles = new VentaDetalles();
             Model.Ventas venta;
-            venta = ServicesComercio.ObtengaLaVentaPorElId(id);
-            detalles.Id_Venta = venta.Id;
+            
 
             ViewBag.ListaInventarios = ServicesComercio.ObtengaLaListaDeInventarios();
+
+
+            var httpClient = new HttpClient();
+
+            var query = new Dictionary<string, string>()
+            {
+
+                ["id"] = id.ToString(),
+            };
+
+            var uri = QueryHelpers.AddQueryString("https://localhost:7273/api/VentasAPI/GetVentaById", query);
+
+            var response = await httpClient.GetAsync(uri);
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            venta = JsonConvert.DeserializeObject<Model.Ventas>(apiResponse);
+
+
+            detalles.Id_Venta = venta.Id;
+
 
             return View(detalles);
         }
@@ -84,18 +127,22 @@ namespace Proyecto.UI.Controllers
         // POST: InventariosController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult RegistreElItemALaVenta(Model.VentaDetalles detalles)
+        public async Task <IActionResult> RegistreElItemALaVenta(Model.DetallesVentaParaAgregar detalles)
         {
             try
             {
                 ViewBag.ListaInventarios = ServicesComercio.ObtengaLaListaDeInventarios();
 
-                Model.Inventarios inventarios;
-                inventarios = ServicesComercio.ObtengaElItemDelInventario(detalles.Id_Inventario);
-                detalles.Precio = inventarios.Precio;
+                var httpClient = new HttpClient();
+
+                string json = JsonConvert.SerializeObject(detalles);
+                var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                await httpClient.PostAsync("https://localhost:7273/api/VentasAPI/CreateItemVenta", byteContent);
 
 
-                ServicesComercio.AgregueElItemALaVenta(detalles);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -104,16 +151,24 @@ namespace Proyecto.UI.Controllers
             }
         }
 
-        public ActionResult ElimineItemDelInventario(int id)
+        public async Task<ActionResult> ElimineItemDeLaVenta(int id)
         {
-            Model.VentaDetalles ventaDetalles;
-            ventaDetalles = ServicesComercio.ObtengaElItemDelDetalle(id);
+            var httpClient = new HttpClient();
 
-            ServicesComercio.ElimineElItemDelDetalle(id, ventaDetalles.Id_Inventario, ventaDetalles.Id_Venta);
+            var query = new Dictionary<string, string>()
+            {
+
+                ["id"] = id.ToString(),
+            };
+
+            var uri = QueryHelpers.AddQueryString("https://localhost:7273/api/VentasAPI/DeleteItemVenta", query);
+
+            var response = await httpClient.PutAsync(uri, null);
+
             return RedirectToAction(nameof(Index));
         }
 
-        public ActionResult Edit(int id)
+        public ActionResult ProceseLaVenta(int id)
         {
 
             return View();
@@ -122,11 +177,22 @@ namespace Proyecto.UI.Controllers
         // POST: InventariosController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Model.Ventas ventas)
+        public async Task <ActionResult> ProceseLaVenta(Model.VentaParaTerminar ventas)
         {
             try
             {
-                ServicesComercio.ProceseLaVenta(ventas);
+
+
+                var httpClient = new HttpClient();
+                string json = JsonConvert.SerializeObject(ventas);
+
+                var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response = await httpClient.PutAsync("https://localhost:7273/api/VentasAPI/ProceseLaVenta", byteContent);
+               
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -136,21 +202,31 @@ namespace Proyecto.UI.Controllers
         }
 
 
-        public ActionResult ApliqueDescuento(int id)
+        public async Task <ActionResult> ApliqueDescuento(int id)
         {
-            Model.Ventas ventas;
-            ventas = ServicesComercio.ObtengaLaVentaPorElId(id);
-            return View(ventas);
+            
+
+            return View();
         }
 
         // POST: InventariosController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ApliqueDescuento(Model.Ventas ventas)
+        public async Task<ActionResult> ApliqueDescuento(Model.VentaParaAplicarDescuento ventas)
         {
             try
             {
-                ServicesComercio.ApliqueElDescuento(ventas);
+
+                var httpClient = new HttpClient();
+                string json = JsonConvert.SerializeObject(ventas);
+
+                var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response = await httpClient.PutAsync("https://localhost:7273/api/VentasAPI/ApliqueDescuento", byteContent);
+             
                 return RedirectToAction(nameof(Index));
             }
             catch

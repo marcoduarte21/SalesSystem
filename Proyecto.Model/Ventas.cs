@@ -23,7 +23,7 @@ namespace Proyecto.Model
         [Display(Name = "Tipo de Pago")]
         [Required(ErrorMessage = "El campo Tipo de Pago es requerido")]
         public TipoDePago TipoDePago { get; set; }
-        [Required(ErrorMessage = "El campo Total es requerido")]
+        [Display(Name = "Total a Pagar")]
         [DataType(DataType.Currency)]
         public decimal Total { get; set; }
         [Required(ErrorMessage = "El campo SubTotal es requerido")]

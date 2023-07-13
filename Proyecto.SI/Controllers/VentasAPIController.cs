@@ -7,11 +7,11 @@ namespace Proyecto.SI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VentasAPI : ControllerBase
+    public class VentasAPIController : ControllerBase
     {
         BL.ServicesComercio servicesComercio;
 
-        public VentasAPI(DA.DBContexto connection)
+        public VentasAPIController(DA.DBContexto connection)
         {
             servicesComercio = new BL.ServicesComercio(connection);
         }
@@ -38,25 +38,30 @@ namespace Proyecto.SI.Controllers
         }
 
         [HttpPost("CreateVenta")]
-        public IActionResult CreateVenta([FromBody] Model.Ventas ventas)
+        public IActionResult CreateVenta([FromBody] Model.VentaParaIniciar ventas)
         {
             servicesComercio.AgregueLaVenta(ventas);
             return Ok(ventas);
         }
 
         [HttpPost("CreateItemVenta")]
-        public IActionResult CreateItemVenta([FromBody] Model.VentaDetalles ventas)
+        public IActionResult CreateItemVenta([FromBody] Model.DetallesVentaParaAgregar ventas)
         {
+
+            Model.Inventarios inventarios;
+            inventarios = servicesComercio.ObtengaElItemDelInventario(ventas.Id_Inventario);
             servicesComercio.AgregueElItemALaVenta(ventas);
             return Ok(ventas);
         }
 
         [HttpPut("DeleteItemVenta")]
-        public IActionResult DeleteItemVenta([FromBody] Model.VentaDetalles ventaDetalles)
+        public IActionResult DeleteItemVenta(int id)
         {
 
             if(ModelState.IsValid)
             {
+                Model.VentaDetalles ventaDetalles = servicesComercio.ObtengaElItemDelDetalle(id);
+
                 servicesComercio.ElimineElItemDelDetalle(ventaDetalles.Id, ventaDetalles.Id_Inventario, ventaDetalles.Id_Venta);
                 return Ok();
             }
@@ -68,7 +73,7 @@ namespace Proyecto.SI.Controllers
         }
 
         [HttpPut("ProceseLaVenta")]
-        public IActionResult ProceseLaVenta([FromBody] Model.Ventas venta)
+        public IActionResult ProceseLaVenta([FromBody] Model.VentaParaTerminar venta)
         {
 
             if (ModelState.IsValid)
@@ -84,7 +89,7 @@ namespace Proyecto.SI.Controllers
         }
 
         [HttpPut("ApliqueDescuento")]
-        public IActionResult ApliqueDescuento([FromBody] Model.Ventas venta)
+        public IActionResult ApliqueDescuento([FromBody] Model.VentaParaAplicarDescuento venta)
         {
 
             if (ModelState.IsValid)

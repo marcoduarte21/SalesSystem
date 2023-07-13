@@ -13,8 +13,7 @@
         <form asp-action="ApliqueDescuento">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
            
-            <input type="hidden" asp-for="Id" value="@Model.Id"/>
-            <input type="hidden" asp-for="SubTotal" />
+            <input type="hidden" asp-for="Id"/>
             <div class="form-group">
                 <label asp-for="PorcentajeDesCuento" class="control-label"></label>
                 <input asp-for="PorcentajeDesCuento" class="form-control" />

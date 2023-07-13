@@ -82,37 +82,42 @@ namespace Proyecto.BL
         }
         
 
-        public void AgregueLaVenta(Ventas venta)
+        public void AgregueLaVenta(VentaParaIniciar venta)
         {
-            venta.Fecha = ObtenerFechaActual();
-            venta.IdAperturaDeCaja = 1;
-            venta.Estado = EstadoDeLaVenta.EnProceso;
+            Ventas ventas = new Ventas();
 
-            Connection.Ventas.Add(venta);
+            ventas.Id = venta.Id;
+            ventas.NombreCliente = venta.NombreCliente;
+            ventas.UserId = venta.UserId;
+            ventas.Fecha = ObtenerFechaActual();
+            ventas.IdAperturaDeCaja = 1;
+            ventas.Estado = EstadoDeLaVenta.EnProceso;
+
+            Connection.Ventas.Add(ventas);
             Connection.SaveChanges();
 
         }
 
       
-        public void AgregueElItemALaVenta(Model.VentaDetalles detalle)
+        public void AgregueElItemALaVenta(Model.DetallesVentaParaAgregar detalle)
         {
             Model.VentaDetalles ventaDetalles = new VentaDetalles();
             Model.Ventas venta;
             Model.Inventarios inventario;
+            inventario = ObtengaElItemDelInventario(detalle.Id_Inventario);
 
             venta = ObtengaLaVentaPorElId(detalle.Id_Venta);
             venta.VentaDetalles = new List<Model.VentaDetalles>();
 
             ventaDetalles.Id_Venta = detalle.Id_Venta;
             ventaDetalles.Id_Inventario = detalle.Id_Inventario;
-            ventaDetalles.Precio = detalle.Precio;
+            ventaDetalles.Precio = inventario.Precio;
             ventaDetalles.Cantidad = detalle.Cantidad;
             ventaDetalles.Monto = ObtengaElTotalDelItemDeLaVenta(ventaDetalles);
 
             venta.SubTotal += ventaDetalles.Monto;
             venta.Total += ventaDetalles.Monto;
 
-            inventario = ObtengaElItemDelInventario(detalle.Id_Inventario);
             inventario.Cantidad = inventario.Cantidad - ventaDetalles.Cantidad;
 
             venta.VentaDetalles.Add(ventaDetalles);
@@ -130,24 +135,24 @@ namespace Proyecto.BL
             return subtotal;
         }
 
-        public void ApliqueElDescuento(Model.Ventas ventas)
+        public void ApliqueElDescuento(Model.VentaParaAplicarDescuento ventas)
         {
-
-            int subtotal = (int)ventas.SubTotal;
+            
             Model.Ventas venta;
             venta = ObtengaLaVentaPorElId(ventas.Id);
-           
-            venta.PorcentajeDesCuento = ventas.PorcentajeDesCuento;
-            venta.SubTotal = subtotal;
 
-            venta.MontoDescuento = venta.SubTotal * (venta.PorcentajeDesCuento / 100);
+            venta.PorcentajeDesCuento = ventas.PorcentajeDesCuento;
+            decimal porcentaje = venta.PorcentajeDesCuento;
+            porcentaje /= 100;
+
+            venta.MontoDescuento = venta.SubTotal * porcentaje;
             venta.Total = venta.SubTotal - venta.MontoDescuento;
 
             foreach(var item in Connection.VentaDetalles)
             {
                 if(item.Id_Venta == venta.Id)
                 {
-                    item.MontoDescuento = item.Monto * (venta.PorcentajeDesCuento / 100);
+                    item.MontoDescuento = item.Monto * porcentaje;
                     item.Monto -= item.MontoDescuento;
                     Connection.VentaDetalles.Update(item);
                 }
@@ -407,7 +412,7 @@ namespace Proyecto.BL
             return null;
         }
 
-        public void ProceseLaVenta(Ventas ventas)
+        public void ProceseLaVenta(VentaParaTerminar ventas)
         {
             Model.Ventas venta;
             venta = ObtengaLaVentaPorElId(ventas.Id);
