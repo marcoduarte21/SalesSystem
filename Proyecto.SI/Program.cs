@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Proyecto.BL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +12,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //--------------------------------------------------------------------------------------------------------
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<Proyecto.DA.DBContexto>(options =>options.UseSqlServer(connectionString));
+
+//builder.Services.AddDbContext<Proyecto.DA.DBContexto>(options =>options.UseSqlServer(connectionString));
 //--------------------------------------------------------------------------------------------------------
+
+builder.Services.AddScoped<Proyecto.BL.IServicesComercio, Proyecto.BL.ServicesComercio>();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<Proyecto.DA.DBContexto>(x => x.UseSqlServer(connectionString));
 
 
 var app = builder.Build();
