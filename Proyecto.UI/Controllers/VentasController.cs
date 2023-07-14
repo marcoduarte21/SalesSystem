@@ -34,7 +34,7 @@ namespace Proyecto.UI.Controllers
             List<Model.Ventas> lista;
 
 
-            var respuesta = await httpClient.GetAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/GetVentas");
+            var respuesta = await httpClient.GetAsync("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/GetVentas");
             string apiRespuesta = await respuesta.Content.ReadAsStringAsync();
             lista = JsonConvert.DeserializeObject<List<Model.Ventas>>(apiRespuesta);
 
@@ -47,7 +47,7 @@ namespace Proyecto.UI.Controllers
             var httpClient = new HttpClient();
             List<Model.Inventarios> lista;
 
-            var respuesta = await httpClient.GetAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/ObtengaLaListaDeInventarios");
+            var respuesta = await httpClient.GetAsync("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/ObtengaLaListaDeInventarios");
             string apiRespuesta = await respuesta.Content.ReadAsStringAsync();
             lista = JsonConvert.DeserializeObject<List<Model.Inventarios>>(apiRespuesta);
 
@@ -67,11 +67,13 @@ namespace Proyecto.UI.Controllers
                 ["id"] = id.ToString(),
             };
 
-            var uri = QueryHelpers.AddQueryString("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/GetDetallesVenta", query);
+            var uri = QueryHelpers.AddQueryString("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/GetDetallesVenta", query);
 
             var response = await httpCliente.GetAsync(uri);
             string apiResponse = await response.Content.ReadAsStringAsync();
             lista = JsonConvert.DeserializeObject<List<Model.VentaDetalles>>(apiResponse);
+
+            lista = ServicesComercio.ObtengaLaListaDelDetalleLaVenta(id);
 
             return View(lista);
         }
@@ -97,7 +99,7 @@ namespace Proyecto.UI.Controllers
                 var byteContent = new ByteArrayContent(buffer);
 
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                await httpClient.PostAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/CreateVenta", byteContent);
+                await httpClient.PostAsync("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/CreateVenta", byteContent);
                 
                 return RedirectToAction(nameof(Index));
             }
@@ -120,7 +122,7 @@ namespace Proyecto.UI.Controllers
                 ["id"] = id.ToString(),
             };
 
-            var uri = QueryHelpers.AddQueryString("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/GetVentaById", query);
+            var uri = QueryHelpers.AddQueryString("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/GetVentaById", query);
 
             var response = await httpClient.GetAsync(uri);
             string apiResponse = await response.Content.ReadAsStringAsync();
@@ -132,7 +134,7 @@ namespace Proyecto.UI.Controllers
 
             List<Model.Inventarios> lista;
 
-            var respuesta = await httpClient.GetAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/ObtengaLaListaDeInventarios");
+            var respuesta = await httpClient.GetAsync("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/ObtengaLaListaDeInventarios");
             string apiRespuesta = await respuesta.Content.ReadAsStringAsync();
             lista = JsonConvert.DeserializeObject<List<Model.Inventarios>>(apiRespuesta);
 
@@ -154,7 +156,7 @@ namespace Proyecto.UI.Controllers
 
                 List<Model.Inventarios> lista;
 
-                var respuesta = await httpClient.GetAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/ObtengaLaListaDeInventarios");
+                var respuesta = await httpClient.GetAsync("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/ObtengaLaListaDeInventarios");
                 string apiRespuesta = await respuesta.Content.ReadAsStringAsync();
                 lista = JsonConvert.DeserializeObject<List<Model.Inventarios>>(apiRespuesta);
 
@@ -165,7 +167,7 @@ namespace Proyecto.UI.Controllers
                 var byteContent = new ByteArrayContent(buffer);
 
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                await httpClient.PostAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/CreateItemVenta", byteContent);
+                await httpClient.PostAsync("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/CreateItemVenta", byteContent);
 
 
                 return RedirectToAction(nameof(Index));
@@ -186,7 +188,7 @@ namespace Proyecto.UI.Controllers
                 ["id"] = id.ToString(),
             };
 
-            var uri = QueryHelpers.AddQueryString("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/DeleteItemVenta", query);
+            var uri = QueryHelpers.AddQueryString("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/DeleteItemVenta", query);
 
             var response = await httpClient.PutAsync(uri, null);
 
@@ -216,7 +218,7 @@ namespace Proyecto.UI.Controllers
 
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                var response = await httpClient.PutAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/ProceseLaVenta", byteContent);
+                var response = await httpClient.PutAsync("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/ProceseLaVenta", byteContent);
                
                 return RedirectToAction(nameof(Index));
             }
@@ -249,7 +251,7 @@ namespace Proyecto.UI.Controllers
 
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                var response = await httpClient.PutAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/ApliqueDescuento", byteContent);
+                var response = await httpClient.PutAsync("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/ApliqueDescuento", byteContent);
              
                 return RedirectToAction(nameof(Index));
             }
@@ -264,7 +266,7 @@ namespace Proyecto.UI.Controllers
             var httpClient = new HttpClient();
             List<Model.Inventarios> lista;
 
-            var respuesta = await httpClient.GetAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/VentasAPI/ObtengaLaListaDeInventarios");
+            var respuesta = await httpClient.GetAsync("https://api-project-lenguajes.azurewebsites.net/api/VentasAPI/ObtengaLaListaDeInventarios");
             string apiRespuesta = await respuesta.Content.ReadAsStringAsync();
             lista = JsonConvert.DeserializeObject<List<Model.Inventarios>>(apiRespuesta);
 

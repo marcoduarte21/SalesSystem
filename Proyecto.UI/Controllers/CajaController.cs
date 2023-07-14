@@ -32,7 +32,7 @@ namespace Proyecto.UI.Controllers
                 var clientehttp = new HttpClient();
                 List<Model.AperturasDeCaja> lista;
 
-                var respuesta = await clientehttp.GetAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/AperturaDeCaja/ObtengaLaListaDeCajas");
+                var respuesta = await clientehttp.GetAsync("https://api-project-lenguajes.azurewebsites.net/api/AperturaDeCaja/ObtengaLaListaDeCajas");
                 string respuestaDelApi = await respuesta.Content.ReadAsStringAsync();
                 lista = JsonConvert.DeserializeObject<List<Model.AperturasDeCaja>>(respuestaDelApi);
 
@@ -62,7 +62,7 @@ namespace Proyecto.UI.Controllers
                 var byteContent = new ByteArrayContent(buffer);
 
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                await httpClient.PostAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/AperturaDeCaja/CreateCaja", byteContent);
+                await httpClient.PostAsync("https://api-project-lenguajes.azurewebsites.net/api/AperturaDeCaja/CreateCaja", byteContent);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -85,7 +85,7 @@ namespace Proyecto.UI.Controllers
                 ["id"] = id.ToString(),
             };
 
-            var uri = QueryHelpers.AddQueryString("https://ventas-proyecto-ucr.azurewebsites.net/api/AperturaDeCaja/CerrarCaja", query);
+            var uri = QueryHelpers.AddQueryString("https://api-project-lenguajes.azurewebsites.net/api/AperturaDeCaja/CerrarCaja", query);
 
             var response = await httpClient.PutAsync(uri, null);
 
@@ -108,7 +108,7 @@ namespace Proyecto.UI.Controllers
                 ["id"] = id.ToString(),
             };
 
-            var uri = QueryHelpers.AddQueryString("https://ventas-proyecto-ucr.azurewebsites.net/api/AperturaDeCaja/AbrirCaja", query);
+            var uri = QueryHelpers.AddQueryString("https://api-project-lenguajes.azurewebsites.net/api/AperturaDeCaja/AbrirCaja", query);
 
             var response = await httpClient.PutAsync(uri, null);
 

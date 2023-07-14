@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 //builder.Services.AddDbContext<Proyecto.DA.DBContexto>(options =>options.UseSqlServer(connectionString));
 //--------------------------------------------------------------------------------------------------------
 
-builder.Services.AddScoped<Proyecto.BL.IServicesComercio, Proyecto.BL.ServicesComercio>();
+builder.Services.AddScoped<IServicesComercio, ServicesComercio>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 

@@ -38,7 +38,7 @@ namespace Proyecto.UI.Controllers
 
             if (nombre == null)
             {
-                var respuesta = await clientehttp.GetAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/ServicioAjusteDeInventario/ObtengaLaListaDeAjusteDeInventarios");
+                var respuesta = await clientehttp.GetAsync("https://api-project-lenguajes.azurewebsites.net/api/ServicioAjusteDeInventario/ObtengaLaListaDeAjusteDeInventarios");
                 string respuestaDelApi = await respuesta.Content.ReadAsStringAsync();
                 lista = JsonConvert.DeserializeObject<List<Model.Inventarios>>(respuestaDelApi);
                 
@@ -52,7 +52,7 @@ namespace Proyecto.UI.Controllers
                     ["nombre"] = nombre
                 };
 
-                var uri = QueryHelpers.AddQueryString("https://ventas-proyecto-ucr.azurewebsites.net/api/ServicioAjusteDeInventario/ObtengaLaListaPorNombre", query);
+                var uri = QueryHelpers.AddQueryString("https://api-project-lenguajes.azurewebsites.net/api/ServicioAjusteDeInventario/ObtengaLaListaPorNombre", query);
 
                 var response = await clientehttp.GetAsync(uri);
                 string apiResponse = await response.Content.ReadAsStringAsync();
@@ -77,7 +77,7 @@ namespace Proyecto.UI.Controllers
                 ["id"] = id.ToString(),
             };
 
-            var uri = QueryHelpers.AddQueryString("https://ventas-proyecto-ucr.azurewebsites.net/api/ServicioAjusteDeInventario/ObtengaLaListaDeAjustes", query);
+            var uri = QueryHelpers.AddQueryString("https://api-project-lenguajes.azurewebsites.net/api/ServicioAjusteDeInventario/ObtengaLaListaDeAjustes", query);
 
             var response = await httpCliente.GetAsync(uri);
             string apiResponse = await response.Content.ReadAsStringAsync();
@@ -97,7 +97,7 @@ namespace Proyecto.UI.Controllers
                 ["id"] = id.ToString(),
             };
 
-            var uri = QueryHelpers.AddQueryString("https://ventas-proyecto-ucr.azurewebsites.net/api/ServicioAjusteDeInventario/GetDetalleDelAjuste", query);
+            var uri = QueryHelpers.AddQueryString("https://api-project-lenguajes.azurewebsites.net/api/ServicioAjusteDeInventario/GetDetalleDelAjuste", query);
 
             var response = await httpClient.GetAsync(uri);
             string apiResponse = await response.Content.ReadAsStringAsync();
@@ -121,7 +121,7 @@ namespace Proyecto.UI.Controllers
                 ["id"] = id.ToString()
             };
                                  
-            var uri = QueryHelpers.AddQueryString("https://ventas-proyecto-ucr.azurewebsites.net/api/ServicioAjusteDeInventario/ObtengaElInventarioPorId", query);
+            var uri = QueryHelpers.AddQueryString("https://api-project-lenguajes.azurewebsites.net/api/ServicioAjusteDeInventario/ObtengaElInventarioPorId", query);
 
             var respuesta = await clientehttp.GetAsync(uri);
             string respuestaDelApi = await respuesta.Content.ReadAsStringAsync();
@@ -154,7 +154,7 @@ namespace Proyecto.UI.Controllers
 
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");  //Revisar la linea " System.Net.Http.Headers"
 
-                await clienteHttp.PostAsync("https://ventas-proyecto-ucr.azurewebsites.net/api/ServicioAjusteDeInventario/RegistreUnAjusteDeInventario", byteContent);
+                await clienteHttp.PostAsync("https://api-project-lenguajes.azurewebsites.net/api/ServicioAjusteDeInventario/RegistreUnAjusteDeInventario", byteContent);
 
 
                 return RedirectToAction(nameof(Index));

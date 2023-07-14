@@ -314,21 +314,8 @@ namespace Proyecto.BL
 
         public List<Model.Inventarios> ObtengaLaListaDeInventarios()
         {
-            var lista = from inventario in Connection.Inventarios
-                        select inventario;
-
-            if (lista.Count() > 0)
-            {
-
-                return (List<Model.Inventarios>)lista.ToList();
-            }
-            else
-            {
-                return null;
-            }
+            return Connection.Inventarios.ToList();
         }
-
-
 
         public List<Model.Inventarios> ObtengaLaListaDeInventariosPorElNombre(string nombre)
         {
