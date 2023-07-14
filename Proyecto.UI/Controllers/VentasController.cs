@@ -55,11 +55,18 @@ namespace Proyecto.UI.Controllers
             List<Model.VentaDetalles> lista;
             var httpCliente = new HttpClient();
 
-            var respuesta = await httpCliente.GetAsync("https://localhost:7273/api/VentasAPI/GetDetallesVenta");
-            string apiRespuesta = await respuesta.Content.ReadAsStringAsync();
-            lista = JsonConvert.DeserializeObject<List<Model.VentaDetalles>>(apiRespuesta);
+            var query = new Dictionary<string, string>()
+            {
 
-            lista = ServicesComercio.ObtengaLaListaDelDetalleLaVenta(id);
+                ["id"] = id.ToString(),
+            };
+
+            var uri = QueryHelpers.AddQueryString("https://localhost:7273/api/VentasAPI/GetDetallesVenta", query);
+
+            var response = await httpCliente.GetAsync(uri);
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            lista = JsonConvert.DeserializeObject<List<Model.VentaDetalles>>(apiResponse);
+
             return View(lista);
         }
 
@@ -202,10 +209,9 @@ namespace Proyecto.UI.Controllers
         }
 
 
-        public async Task <ActionResult> ApliqueDescuento(int id)
+        public ActionResult ApliqueDescuento(int id)
         {
             
-
             return View();
         }
 
