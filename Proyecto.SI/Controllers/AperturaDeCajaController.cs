@@ -36,19 +36,43 @@ namespace Proyecto.SI.Controllers
         }
 
         [HttpPut("CerrarCaja")]
-        public IActionResult Edite([FromBody] Model.AperturasDeCaja item)
+        public IActionResult CerrarCaja(int id)
         {
+
             if (ModelState.IsValid)
             {
-                //AperturasDeCaja cerrar = ServiciosDelComercio.ObtenerIdCaja(item.Id);
-                ServiciosDelComercio.CerrarCaja(item.Id);
-                return Ok(item);
+                Model.AperturasDeCaja caja = ServiciosDelComercio.ObtenerIdCaja(id);
+                ServiciosDelComercio.CerrarCaja(caja);
+                return Ok();
             }
             else
             {
                 return BadRequest(ModelState);
             }
+
         }
+
+
+        [HttpPut("AbrirCaja")]
+        public IActionResult AbrirCaja(int id)
+        {
+
+            if (ModelState.IsValid)
+            {
+                Model.AperturasDeCaja caja = ServiciosDelComercio.ObtenerIdCaja(id);
+                ServiciosDelComercio.AbrirCaja(caja);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+
+        }
+
+
+
+
 
     }
 }

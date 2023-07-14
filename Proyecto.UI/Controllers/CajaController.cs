@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using Proyecto.BL;
 using Proyecto.Model;
@@ -76,47 +77,46 @@ namespace Proyecto.UI.Controllers
         public async Task<ActionResult> CerrarCaja(int id)
         {
 
-            Model.AperturasDeCaja item = new Model.AperturasDeCaja();
-            try
+            var httpClient = new HttpClient();
+
+            var query = new Dictionary<string, string>()
             {
-                item.Id = id;
-               
-                var httpClient = new HttpClient();
-                string json = JsonConvert.SerializeObject(item);
 
-                var buffer = System.Text.Encoding.UTF8.GetBytes(json);
-                var byteContent = new ByteArrayContent(buffer);
+                ["id"] = id.ToString(),
+            };
 
-                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var uri = QueryHelpers.AddQueryString("https://localhost:7273/api/AperturaDeCaja/CerrarCaja", query);
 
-                var response = await httpClient.PutAsync("https://localhost:7273/api/AperturaDeCaja/CerrarCaja", byteContent);
+            var response = await httpClient.PutAsync(uri, null);
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
 
-           
+
+
         }
 
-        public IActionResult AbrirCaja(int id)
+
+
+        public async Task<ActionResult> AbrirCaja(int id)
         {
-            if (ModelState.IsValid)
+
+            var httpClient = new HttpClient();
+
+            var query = new Dictionary<string, string>()
             {
-                AperturasDeCaja abrir = _servicesComercio.ObtenerIdCaja(id);
-                _servicesComercio.AbrirCaja(abrir);
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                return BadRequest(ModelState);
-            }
+
+                ["id"] = id.ToString(),
+            };
+
+            var uri = QueryHelpers.AddQueryString("https://localhost:7273/api/AperturaDeCaja/AbrirCaja", query);
+
+            var response = await httpClient.PutAsync(uri, null);
+
+            return RedirectToAction(nameof(Index));
+
+
 
         }
-
-
 
 
     }
