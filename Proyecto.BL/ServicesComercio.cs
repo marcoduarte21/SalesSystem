@@ -60,7 +60,7 @@ namespace Proyecto.BL
         public void AbraLaCaja(Model.AperturasDeCaja caja)
         {
 
-            bool cajaAbierta = Connection.AperturasDeCaja.Any(a => a.UserId == ObtenerElIdUsuarioLogueado() && a.Estado == EstadoDeLaCaja.ABIERTA);
+            bool cajaAbierta = Connection.AperturasDeCaja.Any(a => a.UserId == caja.UserId && a.Estado == EstadoDeLaCaja.ABIERTA);
 
             if (cajaAbierta)
             {
@@ -73,7 +73,7 @@ namespace Proyecto.BL
 
 
             caja.FechaDeInicio = ObtenerFechaActual();
-            caja.UserId = ObtenerElIdUsuarioLogueado();
+            caja.UserId = caja.UserId;
             caja.Estado = EstadoDeLaCaja.ABIERTA;
 
             Connection.AperturasDeCaja.Add(caja);

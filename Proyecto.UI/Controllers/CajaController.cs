@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MathNet.Numerics.Distributions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Proyecto.BL;
 using Proyecto.Model;
+using System.Net.Http.Headers;
 
 namespace Proyecto.UI.Controllers
 {
@@ -13,16 +16,31 @@ namespace Proyecto.UI.Controllers
         static string estado;
         private readonly ServicesComercio _servicesComercio;
 
-        public CajaController(DA.DBContexto connection)
+        DA.DBContexto DBContexto;
+        BL.ServicesComercio ServiciosDelComercio;
+        private readonly UserManager<IdentityUser> _UserManager;
+
+        public CajaController(DA.DBContexto connection, UserManager<IdentityUser> _userManager)
         {
             _servicesComercio = new ServicesComercio(connection);
+            _UserManager = _userManager;
         }
 
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            List<AperturasDeCaja> aperturasDeCajas;
-            aperturasDeCajas = _servicesComercio.ObtengaLaListaDeCajas();
-            return View(aperturasDeCajas);
+                var clientehttp = new HttpClient();
+                List<Model.AperturasDeCaja> lista;
+
+                var respuesta = await clientehttp.GetAsync("https://localhost:7273/api/AperturaDeCaja/ObtengaLaListaDeCajas");
+                string respuestaDelApi = await respuesta.Content.ReadAsStringAsync();
+                lista = JsonConvert.DeserializeObject<List<Model.AperturasDeCaja>>(respuestaDelApi);
+
+                return View(lista);
+            
+            
+            // List<AperturasDeCaja> aperturasDeCajas;
+            //aperturasDeCajas = _servicesComercio.ObtengaLaListaDeCajas();
+            //return View(aperturasDeCajas);
         }
 
         public ActionResult Create()
@@ -31,11 +49,20 @@ namespace Proyecto.UI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(AperturasDeCaja aperturasDeCaja)
+        public async Task<IActionResult> Create(AperturasDeCaja aperturasDeCaja)
         {
             try
             {
-                _servicesComercio.AgregarCaja(aperturasDeCaja);
+                var httpClient = new HttpClient();
+
+                aperturasDeCaja.UserId = _UserManager.GetUserName(User);
+                string json = JsonConvert.SerializeObject(aperturasDeCaja);
+                var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                await httpClient.PostAsync("https://localhost:7273/api/AperturaDeCaja/CreateCaja", byteContent);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -44,18 +71,34 @@ namespace Proyecto.UI.Controllers
             }
         }
 
-        public IActionResult CerrarCaja(int id)
+
+
+        public async Task<ActionResult> CerrarCaja(int id)
         {
-            if (ModelState.IsValid)
+
+            Model.AperturasDeCaja item = new Model.AperturasDeCaja();
+            try
             {
-                AperturasDeCaja cerrar = _servicesComercio.ObtenerIdCaja(id);
-                _servicesComercio.CerrarCaja(cerrar);
+                item.Id = id;
+               
+                var httpClient = new HttpClient();
+                string json = JsonConvert.SerializeObject(item);
+
+                var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response = await httpClient.PutAsync("https://localhost:7273/api/AperturaDeCaja/CerrarCaja", byteContent);
+
                 return RedirectToAction(nameof(Index));
             }
-            else
+            catch
             {
-                return BadRequest(ModelState);
+                return View();
             }
+
+           
         }
 
         public IActionResult AbrirCaja(int id)
