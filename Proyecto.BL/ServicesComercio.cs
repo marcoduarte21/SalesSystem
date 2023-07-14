@@ -105,23 +105,25 @@ namespace Proyecto.BL
             Model.Ventas venta;
             Model.Inventarios inventario;
             inventario = ObtengaElItemDelInventario(detalle.Id_Inventario);
+            inventario.VentaDetalles = new List<VentaDetalles>();
 
             venta = ObtengaLaVentaPorElId(detalle.Id_Venta);
             venta.VentaDetalles = new List<Model.VentaDetalles>();
+
 
             ventaDetalles.Id_Venta = detalle.Id_Venta;
             ventaDetalles.Id_Inventario = detalle.Id_Inventario;
             ventaDetalles.Precio = inventario.Precio;
             ventaDetalles.Cantidad = detalle.Cantidad;
             ventaDetalles.Monto = ObtengaElTotalDelItemDeLaVenta(ventaDetalles);
-            ventaDetalles.Inventarios.Nombre = inventario.Nombre;
-
+            
             venta.SubTotal += ventaDetalles.Monto;
             venta.Total += ventaDetalles.Monto;
 
             inventario.Cantidad = inventario.Cantidad - ventaDetalles.Cantidad;
 
 
+            inventario.VentaDetalles.Add(ventaDetalles);
             venta.VentaDetalles.Add(ventaDetalles);
             Connection.Inventarios.Update(inventario);
             Connection.Ventas.Update(venta);
