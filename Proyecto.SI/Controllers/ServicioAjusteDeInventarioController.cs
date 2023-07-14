@@ -8,13 +8,13 @@ namespace Proyecto.SI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ServicioAjusteDeInventario : ControllerBase
+    public class ServicioAjusteDeInventarioController : ControllerBase
     {
         DA.DBContexto DBContexto;
         BL.ServicesComercio ServiciosDelComercio;
        
 
-        public ServicioAjusteDeInventario(DA.DBContexto connection)
+        public ServicioAjusteDeInventarioController(DA.DBContexto connection)
         {
 
             DBContexto = connection;
@@ -38,13 +38,24 @@ namespace Proyecto.SI.Controllers
         }
 
         [HttpPost("RegistreUnAjusteDeInventario")]
-        public IActionResult RegristreUnAjusteDeInventario([FromBody] Model.AjusteDeInventarioParaAgregar ajusteDeInventario)
+        public IActionResult RegistreUnAjusteDeInventario([FromBody] Model.AjusteDeInventarioParaAgregar ajusteDeInventario)
         {
             ServiciosDelComercio.AgregueElNuevoAjusteDeInventario(ajusteDeInventario);
             return Ok(ajusteDeInventario);
         }
 
+        [HttpGet("ObtengaLaListaDeAjustes")]
+        public List<Model.AjusteDeInventarios> ObtengaLaListaDeAjustes(int id)
+        {
 
+            return ServiciosDelComercio.ObtengaLaListaDeAjustesDeInventario(id);
+        }
+
+        [HttpGet("GetDetalleDelAjuste")]
+        public Model.AjusteDeInventarios GetDetalleDelAjuste(int id)
+        {
+            return ServiciosDelComercio.ObtengaLosDetallesDelAjusteDeInventario(id) ;
+        }
 
     }
 }

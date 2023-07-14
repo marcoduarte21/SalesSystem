@@ -52,19 +52,46 @@ namespace Proyecto.UI.Controllers
         }
 
         // GET: AjusteInventariosController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
+            var httpClient = new HttpClient();
             List<Model.AjusteDeInventarios> lista;
-            lista = ServiciosDelComercio.ObtengaLaListaDeAjustesDeInventario(id);
+
+
+            var httpCliente = new HttpClient();
+
+            var query = new Dictionary<string, string>()
+            {
+
+                ["id"] = id.ToString(),
+            };
+
+            var uri = QueryHelpers.AddQueryString("https://localhost:7273/api/ServicioAjusteDeInventario/ObtengaLaListaDeAjustes", query);
+
+            var response = await httpCliente.GetAsync(uri);
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            lista = JsonConvert.DeserializeObject<List<Model.AjusteDeInventarios>>(apiResponse);
             return View(lista);
         }
 
 
-        public ActionResult DetallesDelAjuste(int id)
+        public async Task< ActionResult> DetallesDelAjuste(int id)
         {
-            Model.AjusteDeInventarios item;
-            item = ServiciosDelComercio.ObtengaLosDetallesDelAjusteDeInventario(id);
-            return View(item);
+            Model.AjusteDeInventarios ajuste;
+            var httpClient = new HttpClient();
+
+            var query = new Dictionary<string, string>()
+            {
+
+                ["id"] = id.ToString(),
+            };
+
+            var uri = QueryHelpers.AddQueryString("https://localhost:7273/api/ServicioAjusteDeInventario/GetDetalleDelAjuste", query);
+
+            var response = await httpClient.GetAsync(uri);
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            ajuste = JsonConvert.DeserializeObject<Model.AjusteDeInventarios>(apiResponse);
+            return View(ajuste);
         }
 
         // GET: AjusteInventariosController/Create
@@ -74,14 +101,7 @@ namespace Proyecto.UI.Controllers
             Model.Inventarios itemSeleccionado;
             Model.AjusteDeInventarios itemAjuste;
 
-            //itemSeleccionado = ServiciosDelComercio.ObtengaElItemDelInventario(id);
-
-            //itemAjuste = new Model.AjusteDeInventarios
-            //{
-            //    Id_Inventario = id,
-            //    CantidadActual = itemSeleccionado.Cantidad,
-            //};
-
+          
             var clientehttp = new HttpClient();
 
             var query = new Dictionary<string, string>()
@@ -116,14 +136,14 @@ namespace Proyecto.UI.Controllers
 
                 //ServiciosDelComercio.AgregueElNuevoAjusteDeInventario(item);
                 var clienteHttp = new HttpClient();
-
+                item.UserId = _UserManager.GetUserName(User);
                 string json = JsonConvert.SerializeObject(item);
                 var buffer = System.Text.Encoding.UTF8.GetBytes(json);
                 var byteContent = new ByteArrayContent(buffer);
 
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");  //Revisar la linea " System.Net.Http.Headers"
 
-               var response = await clienteHttp.PostAsync("https://localhost:7273/api/ServicioAjusteDeInventario/RegistreUnAjusteDeInventario", byteContent);
+                await clienteHttp.PostAsync("https://localhost:7273/api/ServicioAjusteDeInventario/RegistreUnAjusteDeInventario", byteContent);
 
 
                 return RedirectToAction(nameof(Index));
@@ -134,47 +154,6 @@ namespace Proyecto.UI.Controllers
             }
         }
 
-        // GET: AjusteInventariosController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: AjusteInventariosController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: AjusteInventariosController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AjusteInventariosController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }
 

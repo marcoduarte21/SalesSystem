@@ -26,6 +26,8 @@ namespace Proyecto.Model
         [Required(ErrorMessage = "El campo Observaciones es requerido")]
         public string Observaciones { get; set; }
 
+        public string UserId { get; set; }
+
 
     }
 }

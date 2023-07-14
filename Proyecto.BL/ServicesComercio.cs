@@ -98,7 +98,7 @@ namespace Proyecto.BL
 
         }
 
-      
+
         public void AgregueElItemALaVenta(Model.DetallesVentaParaAgregar detalle)
         {
             Model.VentaDetalles ventaDetalles = new VentaDetalles();
@@ -114,11 +114,13 @@ namespace Proyecto.BL
             ventaDetalles.Precio = inventario.Precio;
             ventaDetalles.Cantidad = detalle.Cantidad;
             ventaDetalles.Monto = ObtengaElTotalDelItemDeLaVenta(ventaDetalles);
+            ventaDetalles.Inventarios.Nombre = inventario.Nombre;
 
             venta.SubTotal += ventaDetalles.Monto;
             venta.Total += ventaDetalles.Monto;
 
             inventario.Cantidad = inventario.Cantidad - ventaDetalles.Cantidad;
+
 
             venta.VentaDetalles.Add(ventaDetalles);
             Connection.Inventarios.Update(inventario);
@@ -227,11 +229,6 @@ namespace Proyecto.BL
 
         }
 
-        public void ElimineElItemDeLaVenta(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public string ObtenerElIdUsuarioLogueado()
         {
             var httpContextAccessor = new HttpContextAccessor();
@@ -305,6 +302,7 @@ namespace Proyecto.BL
 
             var lista = from detalle in Connection.VentaDetalles
                         join venta in Connection.Ventas on detalle.Id_Venta equals venta.Id
+                        join inventario in Connection.Inventarios on detalle.Id_Inventario equals inventario.Id
                         where detalle.Id_Venta == idVenta
                         select detalle;
 
@@ -354,7 +352,7 @@ namespace Proyecto.BL
             ajuste.Tipo = NuevoAjuste.Tipo;
             ajuste.Observaciones = NuevoAjuste.Observaciones;
             ajuste.Fecha = ObtenerFechaActual();
-            ajuste.UserId = ObtenerElUserNameLogueado();
+            ajuste.UserId = NuevoAjuste.UserId;
 
             itemDelInventario.AjusteDeInventarios.Add(ajuste);
             Connection.Inventarios.Update(itemDelInventario);
