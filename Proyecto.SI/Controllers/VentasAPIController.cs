@@ -104,5 +104,12 @@ namespace Proyecto.SI.Controllers
 
         }
 
+
+        [HttpGet("ObtengaLaListaDeInventarios")]
+        public List<Model.Inventarios> ObtengaLaListaDeInventarios()
+        {
+            return servicesComercio.ObtengaLaListaDeInventarios();
+        }
+
     }
 }

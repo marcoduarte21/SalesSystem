@@ -28,6 +28,12 @@ namespace Proyecto.SI.Controllers
             return ServiciosDelComercio.ObtengaLaListaDeInventarios();
         }
 
+        [HttpGet("ObtengaLaListaPorNombre")]
+        public List<Model.Inventarios> ObtengaLaListaPorNombre(string nombre)
+        {
+            return ServiciosDelComercio.ObtengaLaListaDeInventariosPorElNombre(nombre);
+        }
+
         // GET api/<MenuController>/5
         [HttpGet("ObtengaElInventarioPorId")]
         public Proyecto.Model.Inventarios ObtengaElInventarioPorId(int id)
