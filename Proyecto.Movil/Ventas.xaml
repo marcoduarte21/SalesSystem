@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Proyecto.Movil.Ventas"
+             Title="Ventas">
+    <VerticalStackLayout>
+        <Label 
+            Text="Resumen de Ventas"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+
+        <Button Text="Efectivo" Clicked="OnButton1Clicked" />
+
+        <Button Text="Tarjeta" Clicked="OnButton2Clicked" />
+
+        <Button Text="SinpeMovil" Clicked="OnButton3Clicked" />
+    </VerticalStackLayout>
+</ContentPage>
